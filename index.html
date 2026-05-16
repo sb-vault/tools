@@ -828,20 +828,25 @@ function renderGraph(){
   const gridCol=dark?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)';
   const txtCol=dark?'#9099b0':'#4a5270';
 
-  // Draw custom hover dot via plugin — no built-in hover points at all
+  // Use public afterEvent hook instead of private _active
   const hoverDotPlugin={
     id:'hoverDot',
+    afterEvent(chart,args){
+      if(args.event.type==='mousemove'||args.event.type==='mouseout'){
+        chart._hoverDotActive=chart.tooltip.getActiveElements();
+        chart.draw();
+      }
+    },
     afterDatasetsDraw(chart){
-      const active=chart.tooltip._active;
+      const active=chart._hoverDotActive;
       if(!active||!active.length)return;
       const c=chart.ctx;
-      const {x,y}=active[0].element;
+      const el=active[0].element;
+      if(!el)return;
       c.save();
-      // Outer ring
-      c.beginPath();c.arc(x,y,6,0,Math.PI*2);
+      c.beginPath();c.arc(el.x,el.y,6,0,Math.PI*2);
       c.strokeStyle='#c84a10';c.lineWidth=2;c.stroke();
-      // Inner dot
-      c.beginPath();c.arc(x,y,2.5,0,Math.PI*2);
+      c.beginPath();c.arc(el.x,el.y,2.5,0,Math.PI*2);
       c.fillStyle='#c84a10';c.fill();
       c.restore();
     }
@@ -853,7 +858,7 @@ function renderGraph(){
       label:'Profit',data,
       borderWidth:3,
       pointRadius:0,
-      pointHoverRadius:0,  // disable ALL built-in hover rendering
+      pointHoverRadius:0,
       pointHitRadius:40,
       tension:0.4,fill:true,
       segment:{
@@ -865,6 +870,7 @@ function renderGraph(){
     options:{
       responsive:true,maintainAspectRatio:false,
       interaction:{mode:'index',intersect:false},
+      animation:false,
       plugins:{
         legend:{display:false},
         tooltip:{
@@ -878,25 +884,21 @@ function renderGraph(){
       scales:{
         x:{grid:{color:gridCol},ticks:{color:txtCol,maxTicksLimit:12},title:{display:true,text:xVar==='mf'?'Magic Find':'Eye Price (mil)',color:txtCol}},
         y:{grid:{color:gridCol},ticks:{color:txtCol,callback:v=>v.toFixed(2)+'m'},title:{display:true,text:'Profit per Dragon (mil)',color:txtCol},afterDataLimits(s){s.max=Math.max(s.max,.1);s.min=Math.min(s.min,-.1);}}
-      },
-      animation:{duration:250}
+      }
     }
   });
 
-  // Position breakeven badge AFTER chart renders, using canvas offset
+  // Position breakeven badge using requestAnimationFrame for reliable cross-platform timing
   const badge=document.getElementById('breakevenBadge');
   const canvas=document.getElementById('profitChart');
   if(!badge)return;
 
   if(breakevenVal!==null&&breakevenIdx!==null){
-    // Wait for chart to finish drawing then get pixel coords
-    setTimeout(()=>{
+    requestAnimationFrame(()=>{
       if(!profitChart)return;
       const meta=profitChart.getDatasetMeta(0);
       const pt=meta.data[breakevenIdx];
       if(!pt)return;
-      // pt.x and pt.y are pixel positions on the canvas
-      // badge parent is position:relative card div, canvas is inside it
       const canvasRect=canvas.getBoundingClientRect();
       const parentRect=badge.parentElement.getBoundingClientRect();
       const x=pt.x+(canvasRect.left-parentRect.left);
@@ -909,12 +911,11 @@ function renderGraph(){
       badge.style.visibility='visible';
       badge.style.left=(x - badge.offsetWidth/2)+'px';
       badge.style.top=(y - badge.offsetHeight - 8)+'px';
-    },260);
+    });
   } else {
     badge.style.display='none';
   }
 
-  // Hide badge on mouseenter, restore on mouseleave
   canvas.onmouseenter=()=>{ badge.style.visibility='hidden'; };
   canvas.onmouseleave=()=>{ badge.style.visibility='visible'; };
 }
