@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dragon Profit Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root[data-theme="dark"]{--bg:#0a0c10;--bg2:#111318;--bg3:#181c24;--border:#2a2f3d;--text:#e8eaf0;--text2:#9099b0;--text3:#5a6278;--green:#4ecb71;--red:#e85555;--gold:#f0c060;--sunset1:#ff6b35;--sunset2:#f7931e;--sunset3:#ffcd3c;--legendary:#ffaa00;--epic:#bb44ff;--rare:#5588ff;--uncommon:#55dd55;--common:#999999;--card-shadow:0 4px 32px rgba(0,0,0,.5)}
+:root[data-theme="light"]{--bg:#f0f2f8;--bg2:#fff;--bg3:#e8ebf5;--border:#d0d5e8;--text:#1a1e2e;--text2:#4a5270;--text3:#8a92b0;--green:#1a9940;--red:#c83030;--gold:#b07820;--sunset1:#cc4010;--sunset2:#bb6000;--sunset3:#997700;--legendary:#cc8800;--epic:#9900cc;--rare:#2244cc;--uncommon:#228822;--common:#555;--card-shadow:0 4px 24px rgba(0,0,0,.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 15%,rgba(255,107,53,.05) 0,transparent 55%),radial-gradient(ellipse at 85% 80%,rgba(247,147,30,.04) 0,transparent 55%);pointer-events:none;z-index:0}
+.container{max-width:1320px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+header{padding:26px 0 18px;border-bottom:1px solid var(--border);margin-bottom:26px}
+.header-inner{display:flex;align-items:center;justify-content:space-between}
+.logo h1{font-family:'Cinzel',serif;font-size:25px;font-weight:700;background:linear-gradient(120deg,var(--sunset1),var(--sunset2),var(--sunset3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo p{font-size:11px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:12px}
+.price-status{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text3)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
+.status-dot.live{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+.status-dot.loading{background:var(--gold);animation:pulse .7s infinite}
+.status-dot.error{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.theme-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s}
+.theme-btn:hover{border-color:var(--sunset1);color:var(--sunset1)}
+.tabs{display:flex;gap:3px;margin-bottom:22px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:4px;width:fit-content}
+.tab{padding:7px 17px;border-radius:8px;border:none;background:transparent;color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.tab.active{background:linear-gradient(120deg,var(--sunset1),var(--sunset2));color:#fff;box-shadow:0 2px 10px rgba(255,107,53,.35)}
+.tab:hover:not(.active){color:var(--text);background:var(--bg3)}
+.tab-content{display:none}.tab-content.active{display:block;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:var(--card-shadow)}
+.card-title{font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.main-grid{display:grid;grid-template-columns:285px 1fr;gap:18px;align-items:start}
+.inputs-stack{display:flex;flex-direction:column;gap:12px}
+.input-group{display:flex;flex-direction:column;gap:9px}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+label{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:4px}
+input[type=number],select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:8px 10px;outline:none;transition:border-color .2s,box-shadow .2s;-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]:focus,select:focus{border-color:var(--sunset1);box-shadow:0 0 0 3px rgba(255,107,53,.1)}
+select option{background:var(--bg2)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px}
+.toggle-label{font-size:13px;color:var(--text2)}
+.toggle{position:relative;width:38px;height:21px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bg);border:1px solid var(--border);border-radius:21px;cursor:pointer;transition:.2s}
+.toggle-slider::before{content:'';position:absolute;width:15px;height:15px;left:2px;top:2px;background:var(--text3);border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--sunset1);border-color:var(--sunset1)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(17px);background:#fff}
+.calc-btn{width:100%;padding:12px;background:linear-gradient(120deg,var(--sunset1),var(--sunset2));border:none;border-radius:10px;color:#fff;font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.08em;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(255,107,53,.3)}
+.calc-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,53,.45)}
+.calc-btn:active{transform:translateY(0)}
+
+/* Banner */
+.banner-controls{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.pill-toggle{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.pill-btn{padding:5px 13px;border:none;background:transparent;color:var(--text2);font-size:12px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;transition:all .2s}
+.pill-btn.active{background:var(--sunset1);color:#fff}
+.profit-banner{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px}
+.profit-cell{background:var(--bg2);padding:15px 18px;display:flex;flex-direction:column;gap:4px}
+.profit-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+.profit-value{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.positive{color:var(--green)}.negative{color:var(--red)}.neutral{color:var(--gold)}.val-accent{color:var(--sunset2)}
+
+/* Rarities */
+.rarity-legendary{color:var(--legendary)}.rarity-epic{color:var(--epic)}.rarity-rare{color:var(--rare)}.rarity-uncommon{color:var(--uncommon)}.rarity-common{color:var(--common)}
+.rarity-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;flex-shrink:0;vertical-align:middle}
+.dot-legendary{background:var(--legendary);box-shadow:0 0 5px var(--legendary)}.dot-epic{background:var(--epic);box-shadow:0 0 5px var(--epic)}.dot-rare{background:var(--rare);box-shadow:0 0 4px var(--rare)}.dot-uncommon{background:var(--uncommon)}.dot-common{background:var(--common)}
+.glow-legendary{background:linear-gradient(90deg,rgba(255,170,0,.08),transparent);border-left:2px solid var(--legendary)}
+.glow-epic{background:linear-gradient(90deg,rgba(187,68,255,.07),transparent);border-left:2px solid var(--epic)}
+
+.results-stack{display:flex;flex-direction:column;gap:13px}
+.table-wrap{overflow-x:auto;border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{padding:8px 12px;text-align:right;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;transition:color .15s}
+thead th:hover{color:var(--text)}
+thead th:first-child,thead th:nth-child(2){text-align:left}
+thead th.sort-asc::after{content:' ↑'}
+thead th.sort-desc::after{content:' ↓'}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s}
+tbody tr:hover{background:var(--bg3)}
+tbody tr.total-row{border-top:1px solid var(--border);font-weight:600;background:var(--bg3)}
+td{padding:8px 12px;text-align:right;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap}
+td:first-child{text-align:left;color:var(--text)}
+td:nth-child(2){text-align:left}
+
+/* Altar */
+.altar-section-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:18px 0 10px}
+.altar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px}
+.altar-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px;display:flex;flex-direction:column;gap:5px}
+.altar-card-name{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3)}
+.altar-val{font-size:16px;font-weight:600;color:var(--sunset2);font-variant-numeric:tabular-nums}
+.altar-sub{font-size:11px;color:var(--text3)}
+
+/* Graph */
+.graph-controls{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:16px}
+.chart-container{position:relative;height:420px}
+
+.error-msg{background:rgba(232,85,85,.1);border:1px solid rgba(232,85,85,.3);border-radius:10px;padding:10px 13px;font-size:13px;color:var(--red);display:none;margin-top:8px}
+footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter-spacing:.04em;border-top:1px solid var(--border);margin-top:36px}
+@media(max-width:800px){.main-grid{grid-template-columns:1fr}.profit-banner{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <h1>⚔ Dragon Calculator</h1>
+        <p>Hypixel SkyBlock · Live Profit Analyser</p>
+      </div>
+      <div class="header-right">
+        <div class="price-status">
+          <div class="status-dot loading" id="statusDot"></div>
+          <span id="statusText">Fetching prices...</span>
+        </div>
+        <button class="theme-btn" id="themeBtn">🌙</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('calculator',this)">Calculator</button>
+    <button class="tab" onclick="switchTab('altar',this)">Draconic Altar</button>
+    <button class="tab" onclick="switchTab('prices',this)">Live Prices</button>
+    <button class="tab" onclick="switchTab('graph',this)">Profit Graph</button>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div class="tab-content active" id="tab-calculator">
+    <div class="main-grid">
+      <div class="inputs-stack">
+        <div class="card">
+          <div class="card-title">Your Stats</div>
+          <div class="input-group">
+            <div class="input-row">
+              <div><label>Magic Find</label><input type="number" id="mf" value="400"></div>
+              <div><label>Pet Luck</label><input type="number" id="pl" value="120"></div>
+            </div>
+            <div class="input-row">
+              <div><label>Eyes Placed</label><input type="number" id="eyes" value="4" min="1" max="8"></div>
+              <div><label>Position (14=0)</label><input type="number" id="pos" value="1" min="1" max="14"></div>
+            </div>
+            <div class="input-row">
+              <div><label>Relative DMG %</label><input type="number" id="relDmg" value="100"></div>
+              <div><label>Endermite Level</label><input type="number" id="endermite" value="100" min="0" max="100"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Pet Prices (millions)</div>
+          <div class="input-group">
+            <div><label>Legendary Ender Dragon Pet</label><input type="number" id="legPetPrice" value="480" step="1"></div>
+            <div><label>Epic Ender Dragon Pet</label><input type="number" id="epicPetPrice" value="150" step="1"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Superior Armour Prices (mil)</div>
+          <div class="input-group">
+            <div class="input-row">
+              <div><label>Chestplate (Sell Offer)</label><input type="number" id="supChestSO" value="12" step="0.1"></div>
+              <div><label>Chestplate (Insta Sell)</label><input type="number" id="supChestIS" value="10" step="0.1"></div>
+            </div>
+            <div class="input-row">
+              <div><label>Leggings (Sell Offer)</label><input type="number" id="supLegsSO" value="11" step="0.1"></div>
+              <div><label>Leggings (Insta Sell)</label><input type="number" id="supLegsIS" value="9" step="0.1"></div>
+            </div>
+            <div class="input-row">
+              <div><label>Helmet (Sell Offer)</label><input type="number" id="supHelmSO" value="8" step="0.1"></div>
+              <div><label>Helmet (Insta Sell)</label><input type="number" id="supHelmIS" value="6" step="0.1"></div>
+            </div>
+            <div class="input-row">
+              <div><label>Boots (Sell Offer)</label><input type="number" id="supBootsSO" value="7" step="0.1"></div>
+              <div><label>Boots (Insta Sell)</label><input type="number" id="supBootsIS" value="5" step="0.1"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Settings</div>
+          <div class="input-group">
+            <div><label>Number of Dragons</label><input type="number" id="numDrags" value="500"></div>
+            <div class="toggle-row">
+              <span class="toggle-label">Dragon Piper</span>
+              <label class="toggle"><input type="checkbox" id="dragPiper" checked><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+        </div>
+
+        <button class="calc-btn" onclick="calculate()">Calculate Profit</button>
+        <div class="error-msg" id="errorMsg"></div>
+      </div>
+
+      <div class="results-stack">
+        <!-- Banner controls -->
+        <div class="banner-controls">
+          <div class="pill-toggle">
+            <button class="pill-btn active" id="btnOverall" onclick="setView('overall')">Overall</button>
+            <button class="pill-btn" id="btnPerDrag" onclick="setView('perDragon')">Per Dragon</button>
+          </div>
+          <div class="pill-toggle">
+            <button class="pill-btn active" id="btnSellOffer" onclick="setPriceType('sellOffer')">Sell Offer / Buy Offer</button>
+            <button class="pill-btn" id="btnInstaSell" onclick="setPriceType('instaSell')">Insta Sell / Insta Buy</button>
+          </div>
+        </div>
+
+        <div class="profit-banner">
+          <div class="profit-cell">
+            <span class="profit-label" id="lbl-spawn">Spawning Cost (Overall)</span>
+            <span class="profit-value val-accent" id="res-spawn">—</span>
+          </div>
+          <div class="profit-cell">
+            <span class="profit-label" id="lbl-made">Coins Made (Overall)</span>
+            <span class="profit-value val-accent" id="res-made">—</span>
+          </div>
+          <div class="profit-cell">
+            <span class="profit-label" id="lbl-profit">Profit (Overall)</span>
+            <span class="profit-value neutral" id="res-profit">—</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Expected Drops</div>
+          <div class="table-wrap">
+            <table id="dropsTableEl">
+              <thead>
+                <tr>
+                  <th onclick="sortTable(0)" id="th0">Item</th>
+                  <th onclick="sortTable(1)" id="th1">Rarity</th>
+                  <th onclick="sortTable(2)" id="th2">Drops / Dragon</th>
+                  <th onclick="sortTable(3)" id="th3">Expected Drops</th>
+                  <th onclick="sortTable(4)" id="th4">Coins (Sell Offer)</th>
+                  <th onclick="sortTable(5)" id="th5">Coins (Insta Sell)</th>
+                </tr>
+              </thead>
+              <tbody id="dropsTable">
+                <tr><td colspan="6" style="text-align:center;color:var(--text3);padding:28px">Enter your stats and click Calculate</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALTAR -->
+  <div class="tab-content" id="tab-altar">
+    <div class="card">
+      <div class="card-title">Draconic Altar Expected Returns</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:4px">Expected coin value from sacrificing items at the Draconic Altar, using live Bazaar prices.</p>
+      <div class="altar-section-title">Aspect of the Dragons Sacrifice</div>
+      <div id="altarAOTD" class="altar-grid"><div style="color:var(--text3);font-size:13px">Loading...</div></div>
+      <div class="altar-section-title" style="margin-top:24px">Non-Superior Armour Sacrifice</div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:10px">All non-superior dragon armour gives the same bonus item chances. Superior armour is sold directly.</p>
+      <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap" id="altarPieceBtns">
+        <button class="tab active" style="font-size:12px;padding:5px 13px" onclick="setAltarPiece('chestplate',this)">Chestplate</button>
+        <button class="tab" style="font-size:12px;padding:5px 13px" onclick="setAltarPiece('leggings',this)">Leggings</button>
+        <button class="tab" style="font-size:12px;padding:5px 13px" onclick="setAltarPiece('helmet',this)">Helmet</button>
+        <button class="tab" style="font-size:12px;padding:5px 13px" onclick="setAltarPiece('boots',this)">Boots</button>
+      </div>
+      <div id="altarArmour" class="altar-grid"><div style="color:var(--text3);font-size:13px">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- PRICES -->
+  <div class="tab-content" id="tab-prices">
+    <div class="card">
+      <div class="card-title">Live Bazaar Prices</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Item</th><th>Sell Offer (mil)</th><th>Insta Sell (mil)</th><th>Spread</th></tr></thead>
+          <tbody id="pricesTable"><tr><td colspan="4" style="text-align:center;color:var(--text3);padding:28px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <p style="font-size:11px;color:var(--text3);margin-top:10px;text-align:right" id="lastUpdated"></p>
+    </div>
+  </div>
+
+  <!-- GRAPH -->
+  <div class="tab-content" id="tab-graph">
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Profit Sensitivity Graph</div>
+      <div class="graph-controls">
+        <div>
+          <label>X Axis</label>
+          <select id="graphVar">
+            <option value="mf">Magic Find</option>
+            <option value="eyePrice">Eye Price (mil)</option>
+          </select>
+        </div>
+        <div><label>Range Min</label><input type="number" id="graphMin" value="0"></div>
+        <div><label>Range Max</label><input type="number" id="graphMax" value="800"></div>
+        <div><label>Eye Price (mil) — for MF graph</label><input type="number" id="graphEyePrice" value="1.38" step="0.01"></div>
+        <div><label>Magic Find — for Eye graph</label><input type="number" id="graphMF" value="400"></div>
+        <div><label>Pet Luck</label><input type="number" id="graphPL" value="120"></div>
+        <div><label>Eyes Placed</label><input type="number" id="graphEyes" value="8" min="1" max="8"></div>
+        <div><label>Position (14=0)</label><input type="number" id="graphPos" value="1" min="1" max="14"></div>
+        <div><label>Endermite Level</label><input type="number" id="graphEndermite" value="100" min="0" max="100"></div>
+        <div>
+          <label>Dragon Piper</label>
+          <select id="graphPiper"><option value="1">Yes</option><option value="0">No</option></select>
+        </div>
+      </div>
+      <button class="calc-btn" style="width:auto;padding:10px 26px" onclick="renderGraph()">Generate Graph</button>
+    </div>
+    <div class="card"><div class="chart-container"><canvas id="profitChart"></canvas></div></div>
+  </div>
+</div>
+<footer>Dragon Calculator · Prices via Hypixel Bazaar API · Not affiliated with Hypixel</footer>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let prices={};
+let lastRows=[];
+let lastTotals={so:0,is:0,spawnSO:0,spawnIS:0};
+let viewMode='overall';      // 'overall' | 'perDragon'
+let priceMode='sellOffer';   // 'sellOffer' | 'instaSell'
+let sortCol=-1,sortDir=1;
+let lastNumDrags=500;
+
+const BAZAAR_IDS=['SUMMONING_EYE','ESSENCE_DRAGON','RITUAL_RESIDUE','DRAGON_HORN','DRAGON_CLAW','ENCHANTED_ENDER_PEARL','ENDER_PEARL','SUPERIOR_DRAGON_FRAGMENT','STRONG_DRAGON_FRAGMENT','WISE_DRAGON_FRAGMENT','YOUNG_DRAGON_FRAGMENT','OLD_DRAGON_FRAGMENT','PROTECTOR_DRAGON_FRAGMENT','UNSTABLE_DRAGON_FRAGMENT'];
+const ITEM_NAMES={SUMMONING_EYE:'Summoning Eye',ESSENCE_DRAGON:'Dragon Essence',RITUAL_RESIDUE:'Ritual Residue',DRAGON_HORN:'Dragon Horn',DRAGON_CLAW:'Dragon Claw',ENCHANTED_ENDER_PEARL:'Enchanted Ender Pearl',ENDER_PEARL:'Ender Pearl',SUPERIOR_DRAGON_FRAGMENT:'Superior Dragon Fragment',STRONG_DRAGON_FRAGMENT:'Strong Dragon Fragment',WISE_DRAGON_FRAGMENT:'Wise Dragon Fragment',YOUNG_DRAGON_FRAGMENT:'Young Dragon Fragment',OLD_DRAGON_FRAGMENT:'Old Dragon Fragment',PROTECTOR_DRAGON_FRAGMENT:'Protector Dragon Fragment',UNSTABLE_DRAGON_FRAGMENT:'Unstable Dragon Fragment'};
+
+// ── Fetch ─────────────────────────────────────────────────────────────────────
+async function fetchPrices(){
+  setStatus('loading','Fetching prices...');
+  try{
+    const res=await fetch('https://hypixelapi.lucas-alexander-pilu.workers.dev/');
+    const data=await res.json();
+    if(!data.success)throw new Error();
+    const N=3;
+    for(const id of BAZAAR_IDS){
+      const p=data.products[id];if(!p)continue;
+      const sell=p.buy_summary.slice(0,N),buy=p.sell_summary.slice(0,N);
+      prices[id]={
+        so:buy.length?buy.reduce((s,o)=>s+o.pricePerUnit,0)/buy.length:0,
+        is:sell.length?sell.reduce((s,o)=>s+o.pricePerUnit,0)/sell.length:0
+      };
+    }
+    setStatus('live','Updated '+new Date().toLocaleTimeString());
+    renderPricesTable();
+    renderAltarCosts('chestplate');
+    document.getElementById('errorMsg').style.display='none';
+  }catch(e){
+    setStatus('error','API fetch failed');
+    const err=document.getElementById('errorMsg');
+    err.style.display='block';
+    err.textContent='Could not load Bazaar prices. Check your Cloudflare Worker is deployed correctly.';
+  }
+}
+function setStatus(s,t){document.getElementById('statusDot').className='status-dot '+s;document.getElementById('statusText').textContent=t;}
+function p(id){return prices[id]||{so:0,is:0};}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function clamp(v,mn=0,mx=1){return Math.max(mn,Math.min(mx,v));}
+function fmt(n,dp=3){if(n===null||n===undefined||isNaN(n))return'—';return parseFloat((n/1e6).toFixed(6)).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:dp})+'m';}
+function fmtN(n,dp=6){return isNaN(n)?'—':parseFloat(n.toFixed(dp)).toString();}
+function colorClass(n){return n>0?'positive':n<0?'negative':'neutral';}
+
+// ── Drop calculations (exact from sheet named functions) ──────────────────────
+function QUALITY(eyes,pos,relDmg){const m={1:200,2:175,3:150,4:125,5:110,6:100,7:100,8:100,9:90,10:90,11:80,12:80,13:70,14:0};return 100*eyes+(m[pos]||0)+relDmg;}
+function MF_MULT(mf){return 1+mf/100;}
+
+function calcDrops(eyes,mf,pl,pos,relDmg,piper){
+  const Q   = QUALITY(eyes, pos, relDmg);
+  const mfM = MF_MULT(mf);                  // = 1 + mf/100
+  const petM= 1 + (mf+pl)/100;              // for pet drops
+  const pip = piper ? 1.1 : 1;
+
+  // leg_edrag = max(min(IF(Q<450,0, 0.0001*eyes*petM ),1),0)
+  const leg = Math.max(0, Math.min(1,
+    Q < 450 ? 0 : 0.0001 * eyes * petM
+  ));
+
+  // epic_edrag = max(min(IF(Q<449,0, 0.0005*eyes*petM ),1),0) * (1 - leg)
+  const epic = Math.max(0, Math.min(1,
+    Q < 449 ? 0 : 0.0005 * eyes * petM
+  )) * (1 - leg);
+
+  // horn = max(min(IF(Q<448,0, 0.3*mfM ),1),0) * (1-(leg+epic)) * (0.04*(piper?1.1:1))
+  const horn = Math.max(0, Math.min(1,
+    Q < 448 ? 0 : 0.3 * mfM
+  )) * (1 - leg - epic) * (0.04 * pip);
+
+  // aotd = max(min(IF(Q<447,0, 0.03*eyes*mfM ),1),0) * (1-(leg+epic))
+  const aotd = Math.max(0, Math.min(1,
+    Q < 447 ? 0 : 0.03 * eyes * mfM
+  )) * (1 - leg - epic);
+
+  // claw = max(min(IF(Q<446,0, 0.02*eyes*mfM ),1),0) * (1-(leg+epic+aotd))
+  const claw = Math.max(0, Math.min(1,
+    Q < 446 ? 0 : 0.02 * eyes * mfM
+  )) * (1 - leg - epic - aotd);
+
+  // chestplate = max(min(IF(Q<410,0, 0.3*mfM ),1),0) * (1-(leg+epic+aotd+claw))
+  const chest = Math.max(0, Math.min(1,
+    Q < 410 ? 0 : 0.3 * mfM
+  )) * (1 - leg - epic - aotd - claw);
+
+  // leggings = max(min(IF(Q<360,0, 0.3*mfM ),1),0) * (1-(leg+epic+aotd+claw+chest))
+  const legs = Math.max(0, Math.min(1,
+    Q < 360 ? 0 : 0.3 * mfM
+  )) * (1 - leg - epic - aotd - claw - chest);
+
+  // helmet = max(min(IF(Q<295,0, 0.3*mfM ),1),0) * (1-(leg+epic+aotd+claw+chest+legs))
+  const helm = Math.max(0, Math.min(1,
+    Q < 295 ? 0 : 0.3 * mfM
+  )) * (1 - leg - epic - aotd - claw - chest - legs);
+
+  // boots = max(min( max(min(IF(Q<290,0, 0.3*mfM ),1),0) * (1 - sum(C15:C22)) ,1),0)
+  // C15:C22 in your sheet = leg, epic, horn, aotd, claw, chest, legs, helm
+  const boots = Math.max(0, Math.min(1,
+    Math.max(0, Math.min(1,
+      Q < 290 ? 0 : 0.3 * mfM
+    )) * (1 - leg - epic - horn - aotd - claw - chest - legs - helm)
+  ));
+
+  // Average quality used based on thresholds — used directly for fragments/pearls
+  const avgQ = Q > 360 ? 360 : Q >= 290 ? 330 : 250;
+  const remQ = avgQ;
+
+  // fragments = floor(remaining / 22)
+  const frags      = Math.floor(remQ / 22);
+  // ench_pearls = floor((remaining - frags*22) / 15)
+  const remQ2      = remQ - frags * 22;
+  const enchPearls = Math.floor(remQ2 / 15);
+  // pearls = floor((remaining - frags*22 - enchPearls*15) / 5)
+  const pearls     = Math.floor((remQ2 - enchPearls * 15) / 5);
+
+  return { leg, epic, horn, aotd, claw, chest, legs, helm, boots, frags, enchPearls, pearls, Q, remQ };
+}
+
+// ── Altar data ────────────────────────────────────────────────────────────────
+const AOTD_BONUS=[
+  {id:'SUPERIOR_DRAGON_FRAGMENT',name:'Superior Dragon Fragment',chance:0.80,avgAmt:12.5},
+  {id:'RITUAL_RESIDUE',name:'Ritual Residue',chance:0.1059,avgAmt:1},
+  {id:'DRAGON_CLAW',name:'Dragon Claw',chance:0.0235,avgAmt:1},
+  {id:'SUMMONING_EYE',name:'Summoning Eye',chance:0.0471,avgAmt:1},
+  {id:'DRAGON_HORN',name:'Dragon Horn',chance:0.0235,avgAmt:1},
+];
+const ARMOUR_BONUS=[
+  {id:'RITUAL_RESIDUE',name:'Ritual Residue',chance:0.1084,avgAmt:1},
+  {id:'DRAGON_HORN',name:'Dragon Horn',chance:0.0241,avgAmt:1},
+  {id:'SUMMONING_EYE',name:'Summoning Eye',chance:0.0482,avgAmt:1},
+];
+const ARMOUR_FRAG_CHANCE=0.8193,ARMOUR_FRAG_AVG=17.5;
+const ARMOUR_ESSENCE={chestplate:40,leggings:35,helmet:25,boots:20};
+const AOTD_ESSENCE=60;
+
+function getAvgNonSupFrag(){
+  const ids=['STRONG_DRAGON_FRAGMENT','WISE_DRAGON_FRAGMENT','YOUNG_DRAGON_FRAGMENT','OLD_DRAGON_FRAGMENT','PROTECTOR_DRAGON_FRAGMENT','UNSTABLE_DRAGON_FRAGMENT'];
+  return{so:ids.reduce((s,id)=>s+p(id).so,0)/ids.length,is:ids.reduce((s,id)=>s+p(id).is,0)/ids.length};
+}
+
+function calcAltarValue(bonusArr,fragId,fragChance,fragAvg,essenceAmt,endermite,avgFragSO,avgFragIS){
+  const enderBonus=1+endermite*0.001;
+  let totalSO=0,totalIS=0;
+  const rows=[];
+  const essSO=p('ESSENCE_DRAGON').so*essenceAmt,essIS=p('ESSENCE_DRAGON').is*essenceAmt;
+  totalSO+=essSO;totalIS+=essIS;
+  rows.push({name:`${essenceAmt}× Dragon Essence`,so:essSO,is:essIS});
+  if(fragChance>0){
+    const fSO=fragChance*fragAvg*(fragId==='AVG'?avgFragSO:p(fragId).so);
+    const fIS=fragChance*fragAvg*(fragId==='AVG'?avgFragIS:p(fragId).is);
+    totalSO+=fSO;totalIS+=fIS;
+    rows.push({name:`Dragon Fragment (${(fragChance*100).toFixed(1)}%, avg ×${fragAvg})`,so:fSO,is:fIS});
+  }
+  for(const b of bonusArr){
+    const eff=Math.min(1,b.chance*enderBonus);
+    const bSO=eff*b.avgAmt*p(b.id).so,bIS=eff*b.avgAmt*p(b.id).is;
+    totalSO+=bSO;totalIS+=bIS;
+    rows.push({name:`${b.name} (${(b.chance*100).toFixed(2)}%)`,so:bSO,is:bIS});
+  }
+  return{rows,totalSO,totalIS};
+}
+
+let currentAltarPiece='chestplate';
+function setAltarPiece(piece,btn){
+  currentAltarPiece=piece;
+  document.querySelectorAll('#altarPieceBtns .tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAltarCosts(piece);
+}
+
+function renderAltarCosts(piece){
+  const endermite=parseFloat(document.getElementById('endermite')?.value||100);
+  const avgFrag=getAvgNonSupFrag();
+  const aotd=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
+  document.getElementById('altarAOTD').innerHTML=`
+    <div class="altar-card" style="border-color:rgba(255,107,53,.3)">
+      <div class="altar-card-name">Total Expected (Sell Offer)</div>
+      <div class="altar-val">${fmt(aotd.totalSO)}</div><div class="altar-sub">per AOTD sacrifice</div>
+    </div>
+    <div class="altar-card" style="border-color:rgba(255,107,53,.2)">
+      <div class="altar-card-name">Total Expected (Insta Sell)</div>
+      <div class="altar-val">${fmt(aotd.totalIS)}</div><div class="altar-sub">per AOTD sacrifice</div>
+    </div>
+    ${aotd.rows.map(r=>`<div class="altar-card"><div class="altar-card-name">${r.name}</div><div class="altar-val" style="font-size:14px">${fmt(r.so)}</div><div class="altar-sub">IS: ${fmt(r.is)}</div></div>`).join('')}`;
+  const ess=ARMOUR_ESSENCE[piece]||35;
+  const arm=calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ess,endermite,avgFrag.so,avgFrag.is);
+  document.getElementById('altarArmour').innerHTML=`
+    <div class="altar-card" style="border-color:rgba(255,107,53,.3)">
+      <div class="altar-card-name">Total Expected (Sell Offer)</div>
+      <div class="altar-val">${fmt(arm.totalSO)}</div><div class="altar-sub">${piece} sacrifice</div>
+    </div>
+    <div class="altar-card" style="border-color:rgba(255,107,53,.2)">
+      <div class="altar-card-name">Total Expected (Insta Sell)</div>
+      <div class="altar-val">${fmt(arm.totalIS)}</div><div class="altar-sub">${piece} sacrifice</div>
+    </div>
+    ${arm.rows.map(r=>`<div class="altar-card"><div class="altar-card-name">${r.name}</div><div class="altar-val" style="font-size:14px">${fmt(r.so)}</div><div class="altar-sub">IS: ${fmt(r.is)}</div></div>`).join('')}`;
+}
+
+// ── Calculate ─────────────────────────────────────────────────────────────────
+function calculate(){
+  const mf=parseFloat(document.getElementById('mf').value)||0;
+  const pl=parseFloat(document.getElementById('pl').value)||0;
+  const eyes=parseFloat(document.getElementById('eyes').value)||8;
+  const pos=parseFloat(document.getElementById('pos').value)||1;
+  const endermite=parseFloat(document.getElementById('endermite').value)||0;
+  const relDmg=parseFloat(document.getElementById('relDmg').value)||100;
+  const numDrags=parseFloat(document.getElementById('numDrags').value)||500;
+  const piper=document.getElementById('dragPiper').checked;
+  const legPetM=(parseFloat(document.getElementById('legPetPrice').value)||480)*1e6;
+  const epicPetM=(parseFloat(document.getElementById('epicPetPrice').value)||150)*1e6;
+  const supChestSO=(parseFloat(document.getElementById('supChestSO').value)||12)*1e6;
+  const supChestIS=(parseFloat(document.getElementById('supChestIS').value)||10)*1e6;
+  const supLegsSO=(parseFloat(document.getElementById('supLegsSO').value)||11)*1e6;
+  const supLegsIS=(parseFloat(document.getElementById('supLegsIS').value)||9)*1e6;
+  const supHelmSO=(parseFloat(document.getElementById('supHelmSO').value)||8)*1e6;
+  const supHelmIS=(parseFloat(document.getElementById('supHelmIS').value)||6)*1e6;
+  const supBootsSO=(parseFloat(document.getElementById('supBootsSO').value)||7)*1e6;
+  const supBootsIS=(parseFloat(document.getElementById('supBootsIS').value)||5)*1e6;
+  lastNumDrags=numDrags;
+
+  const d=calcDrops(eyes,mf,pl,pos,relDmg,piper);
+  console.log(`DEBUG Q=${QUALITY(eyes,pos,relDmg)} eyes=${eyes} pos=${pos} relDmg=${relDmg} mf=${mf}`, JSON.stringify(d));
+  const supProb=1/25;
+  const avgFrag=getAvgNonSupFrag();
+  const wtFragSO=supProb*p('SUPERIOR_DRAGON_FRAGMENT').so+(1-supProb)*avgFrag.so;
+  const wtFragIS=supProb*p('SUPERIOR_DRAGON_FRAGMENT').is+(1-supProb)*avgFrag.is;
+
+  const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
+  const armChest =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.chestplate,endermite,avgFrag.so,avgFrag.is);
+  const armLegs  =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.leggings,endermite,avgFrag.so,avgFrag.is);
+  const armHelm  =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.helmet,endermite,avgFrag.so,avgFrag.is);
+  const armBoots =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.boots,endermite,avgFrag.so,avgFrag.is);
+
+  // Armour: superior sold, others sacrificed at altar
+  const chestSO=d.chest*(supProb*supChestSO+(1-supProb)*armChest.totalSO);
+  const chestIS=d.chest*(supProb*supChestIS+(1-supProb)*armChest.totalIS);
+  const legsSO =d.legs *(supProb*supLegsSO +(1-supProb)*armLegs.totalSO);
+  const legsIS =d.legs *(supProb*supLegsIS +(1-supProb)*armLegs.totalIS);
+  const helmSO =d.helm *(supProb*supHelmSO +(1-supProb)*armHelm.totalSO);
+  const helmIS =d.helm *(supProb*supHelmIS +(1-supProb)*armHelm.totalIS);
+  const bootsSO=d.boots*(supProb*supBootsSO+(1-supProb)*armBoots.totalSO);
+  const bootsIS=d.boots*(supProb*supBootsIS+(1-supProb)*armBoots.totalIS);
+
+  // Correct rarities from game:
+  // leg edrag=legendary, epic edrag=epic, horn=epic, aotd=legendary, claw=rare
+  // armour=legendary, fragment=epic, ench pearl=uncommon, pearl=common
+  lastRows=[
+    {name:'Legendary Ender Dragon Pet',rarity:'legendary',drops:d.leg, so:d.leg*legPetM,   is:d.leg*legPetM,   soPrice:legPetM,   isPrice:legPetM},
+    {name:'Epic Ender Dragon Pet',      rarity:'epic',     drops:d.epic,so:d.epic*epicPetM,  is:d.epic*epicPetM, soPrice:epicPetM,  isPrice:epicPetM},
+    {name:'Dragon Horn',                rarity:'epic',     drops:d.horn,so:d.horn*p('DRAGON_HORN').so,is:d.horn*p('DRAGON_HORN').is,soPrice:p('DRAGON_HORN').so,isPrice:p('DRAGON_HORN').is},
+    {name:'Aspect of the Dragons',      rarity:'legendary',drops:d.aotd,so:d.aotd*aotdAltar.totalSO,is:d.aotd*aotdAltar.totalIS,soPrice:aotdAltar.totalSO,isPrice:aotdAltar.totalIS},
+    {name:'Dragon Claw',                rarity:'rare',     drops:d.claw,so:d.claw*p('DRAGON_CLAW').so,is:d.claw*p('DRAGON_CLAW').is,soPrice:p('DRAGON_CLAW').so,isPrice:p('DRAGON_CLAW').is},
+    {name:'Dragon Chestplate',          rarity:'legendary',drops:d.chest,so:chestSO,is:chestIS,soPrice:chestSO/Math.max(d.chest,1e-12),isPrice:chestIS/Math.max(d.chest,1e-12)},
+    {name:'Dragon Leggings',            rarity:'legendary',drops:d.legs, so:legsSO, is:legsIS, soPrice:legsSO/Math.max(d.legs,1e-12), isPrice:legsIS/Math.max(d.legs,1e-12)},
+    {name:'Dragon Helmet',              rarity:'legendary',drops:d.helm, so:helmSO, is:helmIS, soPrice:helmSO/Math.max(d.helm,1e-12), isPrice:helmIS/Math.max(d.helm,1e-12)},
+    {name:'Dragon Boots',               rarity:'legendary',drops:d.boots,so:bootsSO,is:bootsIS,soPrice:bootsSO/Math.max(d.boots,1e-12),isPrice:bootsIS/Math.max(d.boots,1e-12)},
+    {name:'Dragon Fragment',            rarity:'epic',     drops:d.frags,so:d.frags*wtFragSO,is:d.frags*wtFragIS,soPrice:wtFragSO,isPrice:wtFragIS},
+    {name:'Enchanted Ender Pearl',      rarity:'uncommon', drops:d.enchPearls,so:d.enchPearls*p('ENCHANTED_ENDER_PEARL').so,is:d.enchPearls*p('ENCHANTED_ENDER_PEARL').is,soPrice:p('ENCHANTED_ENDER_PEARL').so,isPrice:p('ENCHANTED_ENDER_PEARL').is},
+    {name:'Ender Pearl',                rarity:'common',   drops:d.pearls,so:d.pearls*p('ENDER_PEARL').so,is:d.pearls*p('ENDER_PEARL').is,soPrice:p('ENDER_PEARL').so,isPrice:p('ENDER_PEARL').is},
+  ];
+
+  let totalSO=0,totalIS=0;
+  lastRows.forEach(r=>{totalSO+=r.so;totalIS+=r.is;});
+
+  // Spawning cost: insta buy eye price (more expensive) for IB, sell offer for BO
+  const spawnSO=eyes*p('SUMMONING_EYE').so;  // buy offer (cheaper to spawn)
+  const spawnIS=eyes*p('SUMMONING_EYE').is;  // insta buy (more expensive to spawn)
+
+  lastTotals={so:totalSO,is:totalIS,spawnSO,spawnIS,numDrags};
+  sortCol=-1;
+  renderBanner();
+  renderTable();
+}
+
+// ── View & price mode ─────────────────────────────────────────────────────────
+function setView(v){
+  viewMode=v;
+  document.getElementById('btnOverall').classList.toggle('active',v==='overall');
+  document.getElementById('btnPerDrag').classList.toggle('active',v==='perDragon');
+  renderBanner();
+  renderTable();
+}
+
+function setPriceType(v){
+  priceMode=v;
+  document.getElementById('btnSellOffer').classList.toggle('active',v==='sellOffer');
+  document.getElementById('btnInstaSell').classList.toggle('active',v==='instaSell');
+  // Update table headers
+  const isSO=v==='sellOffer';
+  document.getElementById('th4').textContent=isSO?'Coins (Sell Offer)':'Coins (Insta Sell)';
+  document.getElementById('th5').textContent=isSO?'Spawning Cost (Buy Offer)':'Spawning Cost (Insta Buy)';
+  renderBanner();
+  renderTable();
+}
+
+function renderBanner(){
+  if(!lastRows.length)return;
+  const {so,is,spawnSO,spawnIS,numDrags}=lastTotals;
+  const overall=viewMode==='overall';
+  const div=overall?numDrags:1;
+  const sfx=overall?'(Overall)':'(Per Dragon)';
+
+  // price mode: sellOffer = sell offer income, buy offer spawning cost
+  //             instaSell = insta sell income, insta buy spawning cost
+  const income  =priceMode==='sellOffer'?so:is;
+  const spawnCost=priceMode==='sellOffer'?spawnSO:spawnIS;
+  const profit  =income-spawnCost;
+
+  document.getElementById('lbl-spawn').textContent=`Spawning Cost ${sfx}`;
+  document.getElementById('lbl-made').textContent=`Coins Made ${sfx}`;
+  document.getElementById('lbl-profit').textContent=`Profit ${sfx}`;
+
+  document.getElementById('res-spawn').textContent=fmt(spawnCost*div);
+  document.getElementById('res-made').textContent=fmt(income*div);
+  const profitEl=document.getElementById('res-profit');
+  profitEl.textContent=fmt(profit*div);
+  profitEl.className='profit-value '+colorClass(profit);
+}
+
+// ── Table render ──────────────────────────────────────────────────────────────
+const RARITY_ORDER={legendary:0,epic:1,rare:2,uncommon:3,common:4};
+function renderTable(){
+  if(!lastRows.length)return;
+  const numDrags=lastTotals.numDrags;
+  const isSO=priceMode==='sellOffer';
+  const div=viewMode==='perDragon'?1:numDrags;
+  const isOverall=viewMode==='overall';
+
+  let rows=[...lastRows];
+  if(sortCol>=0){
+    rows.sort((a,b)=>{
+      let va,vb;
+      if(sortCol===0){va=a.name;vb=b.name;return sortDir*(va<vb?-1:va>vb?1:0);}
+      if(sortCol===1){va=RARITY_ORDER[a.rarity];vb=RARITY_ORDER[b.rarity];}
+      else if(sortCol===2){va=a.drops;vb=b.drops;}
+      else if(sortCol===3){va=a.drops*numDrags;vb=b.drops*numDrags;}
+      else if(sortCol===4){va=isSO?a.so:a.is;vb=isSO?b.so:b.is;}
+      else if(sortCol===5){va=isSO?a.soPrice:a.isPrice;vb=isSO?b.soPrice:b.isPrice;}
+      return sortDir*(va-vb);
+    });
+  }
+
+  let totalSO=0,totalIS=0;
+  lastRows.forEach(r=>{totalSO+=r.so;totalIS+=r.is;});
+  const income=isSO?totalSO:totalIS;
+  const spawn=isSO?lastTotals.spawnSO:lastTotals.spawnIS;
+
+  // Column 4 = coins made, column 5 = spawning cost per item (price per unit shown)
+  const col4label=isSO?'Coins (Sell Offer)':'Coins (Insta Sell)';
+  const col5label=isSO?'Unit Price (Buy Offer)':'Unit Price (Insta Buy)';
+  document.getElementById('th4').textContent=col4label;
+  document.getElementById('th5').textContent=col5label;
+
+  const glowClass=r=>r.rarity==='legendary'?'glow-legendary':r.rarity==='epic'?'glow-epic':'';
+
+  document.getElementById('dropsTable').innerHTML=rows.map(r=>{
+    const coins=isSO?r.so:r.is;
+    const unitP=isSO?r.soPrice:r.isPrice;
+    const coinsDisp=isOverall?coins*numDrags:coins;
+    return`<tr class="${glowClass(r)}">
+      <td><span class="rarity-dot dot-${r.rarity}"></span>${r.name}</td>
+      <td class="rarity-${r.rarity}" style="text-transform:capitalize">${r.rarity}</td>
+      <td>${fmtN(r.drops)}</td>
+      <td>${isOverall?fmtN(r.drops*numDrags,2):fmtN(r.drops)}</td>
+      <td>${fmt(coinsDisp)}</td>
+      <td>${fmt(unitP)}</td>
+    </tr>`;
+  }).join('')+`
+    <tr class="total-row">
+      <td colspan="2">Total</td>
+      <td>—</td>
+      <td>${isOverall?numDrags:'1 dragon'}</td>
+      <td>${fmt(isOverall?income*numDrags:income)}</td>
+      <td>Spawn: ${fmt(isOverall?spawn*numDrags:spawn)}</td>
+    </tr>`;
+}
+
+// ── Sort ──────────────────────────────────────────────────────────────────────
+function sortTable(col){
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+  document.querySelectorAll('thead th').forEach((th,i)=>{
+    th.classList.remove('sort-asc','sort-desc');
+    if(i===col)th.classList.add(sortDir===1?'sort-asc':'sort-desc');
+  });
+  renderTable();
+}
+
+// ── Prices Table ──────────────────────────────────────────────────────────────
+function renderPricesTable(){
+  document.getElementById('pricesTable').innerHTML=BAZAAR_IDS.map(id=>{
+    const pr=prices[id]||{};
+    const spread=pr.is&&pr.so?((pr.is-pr.so)/pr.is*100).toFixed(2)+'%':'—';
+    return`<tr><td>${ITEM_NAMES[id]||id}</td><td>${fmt(pr.so)}</td><td>${fmt(pr.is)}</td><td>${spread}</td></tr>`;
+  }).join('');
+  document.getElementById('lastUpdated').textContent='Last updated: '+new Date().toLocaleTimeString();
+}
+
+// ── Graph ─────────────────────────────────────────────────────────────────────
+let profitChart=null;
+function calcProfitGraph(mf,eyePriceMil,eyes,pl,pos,relDmg,endermite,piper){
+  const d=calcDrops(eyes,mf,pl,pos,relDmg,piper);
+  const supProb=1/25;
+  const avgFrag=getAvgNonSupFrag();
+  const wtFragSO=supProb*p('SUPERIOR_DRAGON_FRAGMENT').so+(1-supProb)*avgFrag.so;
+  const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
+  const armAltar=calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,35,endermite,avgFrag.so,avgFrag.is);
+  const chestSO=d.chest*(1/25*12e6+24/25*armAltar.totalSO);
+  const legsSO=d.legs*(1/25*11e6+24/25*armAltar.totalSO);
+  const helmSO=d.helm*(1/25*8e6+24/25*armAltar.totalSO);
+  const bootsSO=d.boots*(1/25*7e6+24/25*armAltar.totalSO);
+  const totalSO=480e6*d.leg+150e6*d.epic+d.horn*p('DRAGON_HORN').so+d.aotd*aotdAltar.totalSO+d.claw*p('DRAGON_CLAW').so+chestSO+legsSO+helmSO+bootsSO+d.frags*wtFragSO+d.enchPearls*p('ENCHANTED_ENDER_PEARL').so+d.pearls*p('ENDER_PEARL').so;
+  return totalSO-eyes*eyePriceMil*1e6;
+}
+
+function renderGraph(){
+  const xVar=document.getElementById('graphVar').value;
+  const gMin=parseFloat(document.getElementById('graphMin').value);
+  const gMax=parseFloat(document.getElementById('graphMax').value);
+  const gEyePrice=parseFloat(document.getElementById('graphEyePrice').value)||1.38;
+  const gMF=parseFloat(document.getElementById('graphMF').value)||400;
+  const gPL=parseFloat(document.getElementById('graphPL').value)||120;
+  const gEyes=parseFloat(document.getElementById('graphEyes').value)||8;
+  const gPos=parseFloat(document.getElementById('graphPos').value)||1;
+  const gEnderm=parseFloat(document.getElementById('graphEndermite').value)||100;
+  const gPiper=document.getElementById('graphPiper').value==='1';
+  const steps=100,labels=[],data=[];
+  for(let i=0;i<=steps;i++){
+    const val=gMin+(gMax-gMin)*(i/steps);
+    labels.push(parseFloat(val.toFixed(xVar==='mf'?0:3)).toString());
+    data.push(calcProfitGraph(xVar==='mf'?val:gMF,xVar==='eyePrice'?val:gEyePrice,gEyes,gPL,gPos,100,gEnderm,gPiper)/1e6);
+  }
+  const ctx=document.getElementById('profitChart').getContext('2d');
+  if(profitChart)profitChart.destroy();
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gridCol=dark?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)';
+  const txtCol=dark?'#9099b0':'#4a5270';
+  profitChart=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[{label:'Profit per Dragon (mil)',data,borderWidth:2.5,pointRadius:0,tension:0.4,fill:true,
+      segment:{borderColor:c=>data[c.p0DataIndex]>=0?'#4ecb71':'#e85555',backgroundColor:c=>data[c.p0DataIndex]>=0?'rgba(78,203,113,.09)':'rgba(232,85,85,.09)'}}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`Profit: ${c.parsed.y.toFixed(4)}m`,title:c=>`${xVar==='mf'?'Magic Find':'Eye Price (mil)'}: ${c[0].label}`}}},
+      scales:{
+        x:{grid:{color:gridCol},ticks:{color:txtCol,maxTicksLimit:14},title:{display:true,text:xVar==='mf'?'Magic Find':'Summoning Eye Price (mil)',color:txtCol}},
+        y:{grid:{color:gridCol},ticks:{color:txtCol,callback:v=>v.toFixed(2)+'m'},title:{display:true,text:'Profit per Dragon (mil coins)',color:txtCol},afterDataLimits(s){s.max=Math.max(s.max,.1);s.min=Math.min(s.min,-.1);}}
+      },animation:{duration:400}}
+  });
+}
+
+// ── Tabs & Theme ──────────────────────────────────────────────────────────────
+function switchTab(tab,el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tabs>.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  el.classList.add('active');
+}
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
+  h.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeBtn').textContent=dark?'☀️':'🌙';
+  if(profitChart)renderGraph();
+});
+
+fetchPrices();
+setInterval(fetchPrices,60*1000);
+</script>
+</body>
+</html>
