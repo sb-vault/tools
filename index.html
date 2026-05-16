@@ -124,11 +124,16 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
     </div>
   </header>
 
-  <div class="tabs">
-    <button class="tab active" onclick="switchTab('calculator',this)">Calculator</button>
-    <button class="tab" onclick="switchTab('altar',this)">Draconic Altar</button>
-    <button class="tab" onclick="switchTab('prices',this)">Live Prices</button>
-    <button class="tab" onclick="switchTab('graph',this)">Profit Graph</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+    <div class="tabs" style="margin-bottom:0">
+      <button class="tab active" onclick="switchTab('calculator',this)">Calculator</button>
+      <button class="tab" onclick="switchTab('altar',this)">Draconic Altar</button>
+      <button class="tab" onclick="switchTab('prices',this)">Live Prices</button>
+      <button class="tab" onclick="switchTab('graph',this)">Profit Graph</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="calc-btn" style="width:auto;padding:12px 48px;font-size:15px;letter-spacing:.1em" onclick="calculate();renderGraph()">Calculate</button>
+    </div>
   </div>
 
   <!-- CALCULATOR -->
@@ -139,62 +144,36 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
           <div class="card-title">Your Stats</div>
           <div class="input-group">
             <div class="input-row">
-              <div><label>Magic Find</label><input type="number" id="mf" value="400"></div>
-              <div><label>Pet Luck</label><input type="number" id="pl" value="120"></div>
+              <div><label>Magic Find</label><input type="number" id="mf" value="400" oninput="syncMF(this.value);autoUpdate()"></div>
+              <div><label>Pet Luck</label><input type="number" id="pl" value="120" oninput="autoUpdate()"></div>
             </div>
             <div class="input-row">
-              <div><label>Eyes Placed</label><input type="number" id="eyes" value="4" min="1" max="8"></div>
-              <div><label>Position (14=0)</label><input type="number" id="pos" value="1" min="1" max="14"></div>
+              <div><label>Eyes Placed</label><input type="number" id="eyes" value="4" min="1" max="8" oninput="syncEyes(this.value);autoUpdate()"></div>
+              <div><label>Position (14=0)</label><input type="number" id="pos" value="1" min="1" max="14" oninput="autoUpdate()"></div>
             </div>
             <div class="input-row">
-              <div><label>Relative DMG %</label><input type="number" id="relDmg" value="100"></div>
-              <div><label>Endermite Level</label><input type="number" id="endermite" value="100" min="0" max="100"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Pet Prices (millions)</div>
-          <div class="input-group">
-            <div><label>Legendary Ender Dragon Pet</label><input type="number" id="legPetPrice" value="480" step="1"></div>
-            <div><label>Epic Ender Dragon Pet</label><input type="number" id="epicPetPrice" value="150" step="1"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Superior Armour Prices (mil)</div>
-          <div class="input-group">
-            <div class="input-row">
-              <div><label>Chestplate (Sell Offer)</label><input type="number" id="supChestSO" value="12" step="0.1"></div>
-              <div><label>Chestplate (Insta Sell)</label><input type="number" id="supChestIS" value="10" step="0.1"></div>
-            </div>
-            <div class="input-row">
-              <div><label>Leggings (Sell Offer)</label><input type="number" id="supLegsSO" value="11" step="0.1"></div>
-              <div><label>Leggings (Insta Sell)</label><input type="number" id="supLegsIS" value="9" step="0.1"></div>
-            </div>
-            <div class="input-row">
-              <div><label>Helmet (Sell Offer)</label><input type="number" id="supHelmSO" value="8" step="0.1"></div>
-              <div><label>Helmet (Insta Sell)</label><input type="number" id="supHelmIS" value="6" step="0.1"></div>
-            </div>
-            <div class="input-row">
-              <div><label>Boots (Sell Offer)</label><input type="number" id="supBootsSO" value="7" step="0.1"></div>
-              <div><label>Boots (Insta Sell)</label><input type="number" id="supBootsIS" value="5" step="0.1"></div>
+              <div><label>Relative DMG %</label><input type="number" id="relDmg" value="100" oninput="autoUpdate()"></div>
+              <div><label>Endermite Level</label><input type="number" id="endermite" value="100" min="0" max="100" oninput="autoUpdate()"></div>
             </div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-title">Settings</div>
+          <input type="hidden" id="legPetPrice" value="480">
+          <input type="hidden" id="epicPetPrice" value="150">
+          <input type="hidden" id="supChest" value="11">
+          <input type="hidden" id="supLegs" value="10">
+          <input type="hidden" id="supHelm" value="7">
+          <input type="hidden" id="supBoots" value="6">
           <div class="input-group">
-            <div><label>Number of Dragons</label><input type="number" id="numDrags" value="500"></div>
+            <div><label>Number of Dragons</label><input type="number" id="numDrags" value="500" oninput="autoUpdate()"></div>
             <div class="toggle-row">
               <span class="toggle-label">Dragon Piper</span>
-              <label class="toggle"><input type="checkbox" id="dragPiper" checked><span class="toggle-slider"></span></label>
+              <label class="toggle"><input type="checkbox" id="dragPiper" checked onchange="autoUpdate()"><span class="toggle-slider"></span></label>
             </div>
           </div>
         </div>
-
-        <button class="calc-btn" onclick="calculate()">Calculate Profit</button>
         <div class="error-msg" id="errorMsg"></div>
       </div>
 
@@ -237,7 +216,6 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
                   <th onclick="sortTable(2)" id="th2">Drops / Dragon</th>
                   <th onclick="sortTable(3)" id="th3">Expected Drops</th>
                   <th onclick="sortTable(4)" id="th4">Coins (Sell Offer)</th>
-                  <th onclick="sortTable(5)" id="th5">Coins (Insta Sell)</th>
                 </tr>
               </thead>
               <tbody id="dropsTable">
@@ -271,11 +249,35 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
 
   <!-- PRICES -->
   <div class="tab-content" id="tab-prices">
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Pet Prices (mil)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label>Legendary Ender Dragon Pet</label><input type="number" id="legPetPrice2" value="480" step="1" oninput="document.getElementById('legPetPrice').value=this.value;autoUpdate()"></div>
+        <div><label>Epic Ender Dragon Pet</label><input type="number" id="epicPetPrice2" value="150" step="1" oninput="document.getElementById('epicPetPrice').value=this.value;autoUpdate()"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Superior Armour Prices (mil)</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div><label>Chestplate</label><input type="number" id="supChest2" value="11" step="0.1" oninput="document.getElementById('supChest').value=this.value;autoUpdate()"></div>
+        <div><label>Leggings</label><input type="number" id="supLegs2" value="10" step="0.1" oninput="document.getElementById('supLegs').value=this.value;autoUpdate()"></div>
+        <div><label>Helmet</label><input type="number" id="supHelm2" value="7" step="0.1" oninput="document.getElementById('supHelm').value=this.value;autoUpdate()"></div>
+        <div><label>Boots</label><input type="number" id="supBoots2" value="6" step="0.1" oninput="document.getElementById('supBoots').value=this.value;autoUpdate()"></div>
+      </div>
+    </div>
     <div class="card">
       <div class="card-title">Live Bazaar Prices</div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Spread = difference between sell offer and insta sell as a %. A large negative spread means low liquidity.</p>
       <div class="table-wrap">
-        <table>
-          <thead><tr><th>Item</th><th>Sell Offer (mil)</th><th>Insta Sell (mil)</th><th>Spread</th></tr></thead>
+        <table id="pricesTableEl">
+          <thead>
+            <tr>
+              <th onclick="sortPrices(0)" id="pth0">Item</th>
+              <th onclick="sortPrices(1)" id="pth1">Sell Offer (mil)</th>
+              <th onclick="sortPrices(2)" id="pth2">Insta Sell (mil)</th>
+              <th onclick="sortPrices(3)" id="pth3">Spread</th>
+            </tr>
+          </thead>
           <tbody id="pricesTable"><tr><td colspan="4" style="text-align:center;color:var(--text3);padding:28px">Loading...</td></tr></tbody>
         </table>
       </div>
@@ -287,30 +289,25 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
   <div class="tab-content" id="tab-graph">
     <div class="card" style="margin-bottom:14px">
       <div class="card-title">Profit Sensitivity Graph</div>
-      <div class="graph-controls">
+      <div class="graph-controls" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
         <div>
           <label>X Axis</label>
-          <select id="graphVar">
+          <select id="graphVar" onchange="updateGraphRange();autoUpdate()">
             <option value="mf">Magic Find</option>
             <option value="eyePrice">Eye Price (mil)</option>
           </select>
         </div>
-        <div><label>Range Min</label><input type="number" id="graphMin" value="0"></div>
-        <div><label>Range Max</label><input type="number" id="graphMax" value="800"></div>
-        <div><label>Eye Price (mil) — for MF graph</label><input type="number" id="graphEyePrice" value="1.38" step="0.01"></div>
-        <div><label>Magic Find — for Eye graph</label><input type="number" id="graphMF" value="400"></div>
-        <div><label>Pet Luck</label><input type="number" id="graphPL" value="120"></div>
-        <div><label>Eyes Placed</label><input type="number" id="graphEyes" value="8" min="1" max="8"></div>
-        <div><label>Position (14=0)</label><input type="number" id="graphPos" value="1" min="1" max="14"></div>
-        <div><label>Endermite Level</label><input type="number" id="graphEndermite" value="100" min="0" max="100"></div>
-        <div>
-          <label>Dragon Piper</label>
-          <select id="graphPiper"><option value="1">Yes</option><option value="0">No</option></select>
-        </div>
+        <div><label>Range Min</label><input type="number" id="graphMin" value="100" oninput="autoUpdate()"></div>
+        <div><label>Range Max</label><input type="number" id="graphMax" value="500" oninput="autoUpdate()"></div>
+        <div><label>Eye Price (mil)</label><input type="number" id="graphEyePrice" value="1.38" step="0.01" oninput="autoUpdate()"></div>
+        <div><label>Magic Find</label><input type="number" id="graphMF" value="400" oninput="document.getElementById('mf').value=this.value;autoUpdate()"></div>
+        <div><label>Eyes Placed</label><input type="number" id="graphEyes" value="4" min="1" max="8" oninput="document.getElementById('eyes').value=this.value;autoUpdate()"></div>
       </div>
-      <button class="calc-btn" style="width:auto;padding:10px 26px" onclick="renderGraph()">Generate Graph</button>
     </div>
-    <div class="card"><div class="chart-container"><canvas id="profitChart"></canvas></div></div>
+    <div class="card" style="position:relative">
+      <div id="breakevenBadge" style="display:none;position:absolute;z-index:10;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--text);pointer-events:none;transition:opacity .15s"></div>
+      <div class="chart-container"><canvas id="profitChart"></canvas></div>
+    </div>
   </div>
 </div>
 <footer>Dragon Calculator · Prices via Hypixel Bazaar API · Not affiliated with Hypixel</footer>
@@ -325,8 +322,8 @@ let priceMode='sellOffer';   // 'sellOffer' | 'instaSell'
 let sortCol=-1,sortDir=1;
 let lastNumDrags=500;
 
-const BAZAAR_IDS=['SUMMONING_EYE','ESSENCE_DRAGON','RITUAL_RESIDUE','DRAGON_HORN','DRAGON_CLAW','ENCHANTED_ENDER_PEARL','ENDER_PEARL','SUPERIOR_DRAGON_FRAGMENT','STRONG_DRAGON_FRAGMENT','WISE_DRAGON_FRAGMENT','YOUNG_DRAGON_FRAGMENT','OLD_DRAGON_FRAGMENT','PROTECTOR_DRAGON_FRAGMENT','UNSTABLE_DRAGON_FRAGMENT'];
-const ITEM_NAMES={SUMMONING_EYE:'Summoning Eye',ESSENCE_DRAGON:'Dragon Essence',RITUAL_RESIDUE:'Ritual Residue',DRAGON_HORN:'Dragon Horn',DRAGON_CLAW:'Dragon Claw',ENCHANTED_ENDER_PEARL:'Enchanted Ender Pearl',ENDER_PEARL:'Ender Pearl',SUPERIOR_DRAGON_FRAGMENT:'Superior Dragon Fragment',STRONG_DRAGON_FRAGMENT:'Strong Dragon Fragment',WISE_DRAGON_FRAGMENT:'Wise Dragon Fragment',YOUNG_DRAGON_FRAGMENT:'Young Dragon Fragment',OLD_DRAGON_FRAGMENT:'Old Dragon Fragment',PROTECTOR_DRAGON_FRAGMENT:'Protector Dragon Fragment',UNSTABLE_DRAGON_FRAGMENT:'Unstable Dragon Fragment'};
+const BAZAAR_IDS=['SUMMONING_EYE','ESSENCE_DRAGON','RITUAL_RESIDUE','DRAGON_HORN','DRAGON_CLAW','ENCHANTED_ENDER_PEARL','ENDER_PEARL','SUPERIOR_DRAGON_FRAGMENT','STRONG_FRAGMENT','WISE_FRAGMENT','YOUNG_FRAGMENT','OLD_FRAGMENT','PROTECTOR_FRAGMENT','UNSTABLE_FRAGMENT'];
+const ITEM_NAMES={SUMMONING_EYE:'Summoning Eye',ESSENCE_DRAGON:'Dragon Essence',RITUAL_RESIDUE:'Ritual Residue',DRAGON_HORN:'Dragon Horn',DRAGON_CLAW:'Dragon Claw',ENCHANTED_ENDER_PEARL:'Enchanted Ender Pearl',ENDER_PEARL:'Ender Pearl',SUPERIOR_DRAGON_FRAGMENT:'Superior Dragon Fragment',STRONG_FRAGMENT:'Strong Fragment',WISE_FRAGMENT:'Wise Fragment',YOUNG_FRAGMENT:'Young Fragment',OLD_FRAGMENT:'Old Fragment',PROTECTOR_FRAGMENT:'Protector Fragment',UNSTABLE_FRAGMENT:'Unstable Fragment'};
 
 // ── Fetch ─────────────────────────────────────────────────────────────────────
 async function fetchPrices(){
@@ -335,19 +332,30 @@ async function fetchPrices(){
     const res=await fetch('https://hypixelapi.lucas-alexander-pilu.workers.dev/');
     const data=await res.json();
     if(!data.success)throw new Error();
+    const allKeys=Object.keys(data.products);
+    console.log('Total products in API:',allKeys.length);
+    console.log('Has STRONG_FRAGMENT:',allKeys.includes('STRONG_FRAGMENT'));
     const N=3;
     for(const id of BAZAAR_IDS){
-      const p=data.products[id];if(!p)continue;
-      const sell=p.buy_summary.slice(0,N),buy=p.sell_summary.slice(0,N);
+      const prod=data.products[id];if(!prod){console.log('MISSING:',id);continue;}
+      const sell=prod.buy_summary.slice(0,N),buy=prod.sell_summary.slice(0,N);
       prices[id]={
-        so:buy.length?buy.reduce((s,o)=>s+o.pricePerUnit,0)/buy.length:0,
-        is:sell.length?sell.reduce((s,o)=>s+o.pricePerUnit,0)/sell.length:0
+        so:sell.length?sell.reduce((s,o)=>s+o.pricePerUnit,0)/sell.length:0,
+        is:buy.length?buy.reduce((s,o)=>s+o.pricePerUnit,0)/buy.length:0
       };
     }
     setStatus('live','Updated '+new Date().toLocaleTimeString());
+    // Sync live eye price to graph
+    if(prices['SUMMONING_EYE']){
+      const eyeP=parseFloat((prices['SUMMONING_EYE'].so/1e6).toFixed(3));
+      const el=document.getElementById('graphEyePrice');
+      if(el)el.value=eyeP;
+    }
     renderPricesTable();
     renderAltarCosts('chestplate');
     document.getElementById('errorMsg').style.display='none';
+    // Recalculate with fresh prices
+    if(lastRows.length) autoUpdate();
   }catch(e){
     setStatus('error','API fetch failed');
     const err=document.getElementById('errorMsg');
@@ -455,8 +463,14 @@ const ARMOUR_ESSENCE={chestplate:40,leggings:35,helmet:25,boots:20};
 const AOTD_ESSENCE=60;
 
 function getAvgNonSupFrag(){
-  const ids=['STRONG_DRAGON_FRAGMENT','WISE_DRAGON_FRAGMENT','YOUNG_DRAGON_FRAGMENT','OLD_DRAGON_FRAGMENT','PROTECTOR_DRAGON_FRAGMENT','UNSTABLE_DRAGON_FRAGMENT'];
-  return{so:ids.reduce((s,id)=>s+p(id).so,0)/ids.length,is:ids.reduce((s,id)=>s+p(id).is,0)/ids.length};
+  const ids=['STRONG_FRAGMENT','WISE_FRAGMENT','YOUNG_FRAGMENT','OLD_FRAGMENT','PROTECTOR_FRAGMENT','UNSTABLE_FRAGMENT'];
+  let totalSO=0, totalIS=0, count=0;
+  for(const id of ids){
+    const pr=prices[id];
+    if(pr && pr.so>0){ totalSO+=pr.so; totalIS+=pr.is; count++; }
+  }
+  console.log('Frag count:',count,'avgSO:',count?totalSO/count:0,'allPrices:',JSON.stringify(prices));
+  return count ? {so:totalSO/count, is:totalIS/count} : {so:0,is:0};
 }
 
 function calcAltarValue(bonusArr,fragId,fragChance,fragAvg,essenceAmt,endermite,avgFragSO,avgFragIS){
@@ -529,22 +543,22 @@ function calculate(){
   const piper=document.getElementById('dragPiper').checked;
   const legPetM=(parseFloat(document.getElementById('legPetPrice').value)||480)*1e6;
   const epicPetM=(parseFloat(document.getElementById('epicPetPrice').value)||150)*1e6;
-  const supChestSO=(parseFloat(document.getElementById('supChestSO').value)||12)*1e6;
-  const supChestIS=(parseFloat(document.getElementById('supChestIS').value)||10)*1e6;
-  const supLegsSO=(parseFloat(document.getElementById('supLegsSO').value)||11)*1e6;
-  const supLegsIS=(parseFloat(document.getElementById('supLegsIS').value)||9)*1e6;
-  const supHelmSO=(parseFloat(document.getElementById('supHelmSO').value)||8)*1e6;
-  const supHelmIS=(parseFloat(document.getElementById('supHelmIS').value)||6)*1e6;
-  const supBootsSO=(parseFloat(document.getElementById('supBootsSO').value)||7)*1e6;
-  const supBootsIS=(parseFloat(document.getElementById('supBootsIS').value)||5)*1e6;
+  const supChestSO=(parseFloat(document.getElementById('supChest').value)||11)*1e6;
+  const supChestIS=supChestSO;
+  const supLegsSO=(parseFloat(document.getElementById('supLegs').value)||10)*1e6;
+  const supLegsIS=supLegsSO;
+  const supHelmSO=(parseFloat(document.getElementById('supHelm').value)||7)*1e6;
+  const supHelmIS=supHelmSO;
+  const supBootsSO=(parseFloat(document.getElementById('supBoots').value)||6)*1e6;
+  const supBootsIS=supBootsSO;
   lastNumDrags=numDrags;
 
   const d=calcDrops(eyes,mf,pl,pos,relDmg,piper);
   console.log(`DEBUG Q=${QUALITY(eyes,pos,relDmg)} eyes=${eyes} pos=${pos} relDmg=${relDmg} mf=${mf}`, JSON.stringify(d));
   const supProb=1/25;
   const avgFrag=getAvgNonSupFrag();
-  const wtFragSO=supProb*p('SUPERIOR_DRAGON_FRAGMENT').so+(1-supProb)*avgFrag.so;
-  const wtFragIS=supProb*p('SUPERIOR_DRAGON_FRAGMENT').is+(1-supProb)*avgFrag.is;
+  const wtFragSO=avgFrag.so;
+  const wtFragIS=avgFrag.is;
 
   const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
   const armChest =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.chestplate,endermite,avgFrag.so,avgFrag.is);
@@ -566,26 +580,26 @@ function calculate(){
   // leg edrag=legendary, epic edrag=epic, horn=epic, aotd=legendary, claw=rare
   // armour=legendary, fragment=epic, ench pearl=uncommon, pearl=common
   lastRows=[
-    {name:'Legendary Ender Dragon Pet',rarity:'legendary',drops:d.leg, so:d.leg*legPetM,   is:d.leg*legPetM,   soPrice:legPetM,   isPrice:legPetM},
-    {name:'Epic Ender Dragon Pet',      rarity:'epic',     drops:d.epic,so:d.epic*epicPetM,  is:d.epic*epicPetM, soPrice:epicPetM,  isPrice:epicPetM},
-    {name:'Dragon Horn',                rarity:'epic',     drops:d.horn,so:d.horn*p('DRAGON_HORN').so,is:d.horn*p('DRAGON_HORN').is,soPrice:p('DRAGON_HORN').so,isPrice:p('DRAGON_HORN').is},
-    {name:'Aspect of the Dragons',      rarity:'legendary',drops:d.aotd,so:d.aotd*aotdAltar.totalSO,is:d.aotd*aotdAltar.totalIS,soPrice:aotdAltar.totalSO,isPrice:aotdAltar.totalIS},
-    {name:'Dragon Claw',                rarity:'rare',     drops:d.claw,so:d.claw*p('DRAGON_CLAW').so,is:d.claw*p('DRAGON_CLAW').is,soPrice:p('DRAGON_CLAW').so,isPrice:p('DRAGON_CLAW').is},
-    {name:'Dragon Chestplate',          rarity:'legendary',drops:d.chest,so:chestSO,is:chestIS,soPrice:chestSO/Math.max(d.chest,1e-12),isPrice:chestIS/Math.max(d.chest,1e-12)},
-    {name:'Dragon Leggings',            rarity:'legendary',drops:d.legs, so:legsSO, is:legsIS, soPrice:legsSO/Math.max(d.legs,1e-12), isPrice:legsIS/Math.max(d.legs,1e-12)},
-    {name:'Dragon Helmet',              rarity:'legendary',drops:d.helm, so:helmSO, is:helmIS, soPrice:helmSO/Math.max(d.helm,1e-12), isPrice:helmIS/Math.max(d.helm,1e-12)},
-    {name:'Dragon Boots',               rarity:'legendary',drops:d.boots,so:bootsSO,is:bootsIS,soPrice:bootsSO/Math.max(d.boots,1e-12),isPrice:bootsIS/Math.max(d.boots,1e-12)},
-    {name:'Dragon Fragment',            rarity:'epic',     drops:d.frags,so:d.frags*wtFragSO,is:d.frags*wtFragIS,soPrice:wtFragSO,isPrice:wtFragIS},
-    {name:'Enchanted Ender Pearl',      rarity:'uncommon', drops:d.enchPearls,so:d.enchPearls*p('ENCHANTED_ENDER_PEARL').so,is:d.enchPearls*p('ENCHANTED_ENDER_PEARL').is,soPrice:p('ENCHANTED_ENDER_PEARL').so,isPrice:p('ENCHANTED_ENDER_PEARL').is},
-    {name:'Ender Pearl',                rarity:'common',   drops:d.pearls,so:d.pearls*p('ENDER_PEARL').so,is:d.pearls*p('ENDER_PEARL').is,soPrice:p('ENDER_PEARL').so,isPrice:p('ENDER_PEARL').is},
+    {name:'Legendary Ender Dragon Pet',rarity:'legendary',drops:d.leg, so:d.leg*legPetM,   is:d.leg*legPetM},
+    {name:'Epic Ender Dragon Pet',      rarity:'epic',     drops:d.epic,so:d.epic*epicPetM,  is:d.epic*epicPetM},
+    {name:'Dragon Horn',                rarity:'epic',     drops:d.horn,so:d.horn*p('DRAGON_HORN').so,is:d.horn*p('DRAGON_HORN').is},
+    {name:'Aspect of the Dragons',      rarity:'legendary',drops:d.aotd,so:d.aotd*aotdAltar.totalSO,is:d.aotd*aotdAltar.totalIS},
+    {name:'Dragon Claw',                rarity:'rare',     drops:d.claw,so:d.claw*p('DRAGON_CLAW').so,is:d.claw*p('DRAGON_CLAW').is},
+    {name:'Dragon Chestplate',          rarity:'legendary',drops:d.chest,so:chestSO,is:chestIS},
+    {name:'Dragon Leggings',            rarity:'legendary',drops:d.legs, so:legsSO, is:legsIS},
+    {name:'Dragon Helmet',              rarity:'legendary',drops:d.helm, so:helmSO, is:helmIS},
+    {name:'Dragon Boots',               rarity:'legendary',drops:d.boots,so:bootsSO,is:bootsIS},
+    {name:'Dragon Fragment',            rarity:'epic',     drops:d.frags,so:d.frags*getAvgNonSupFrag().so,is:d.frags*getAvgNonSupFrag().is},
+    {name:'Enchanted Ender Pearl',      rarity:'uncommon', drops:d.enchPearls,so:d.enchPearls*p('ENCHANTED_ENDER_PEARL').so,is:d.enchPearls*p('ENCHANTED_ENDER_PEARL').is},
+    {name:'Ender Pearl',                rarity:'common',   drops:d.pearls,so:d.pearls*p('ENDER_PEARL').so,is:d.pearls*p('ENDER_PEARL').is},
   ];
 
   let totalSO=0,totalIS=0;
   lastRows.forEach(r=>{totalSO+=r.so;totalIS+=r.is;});
 
   // Spawning cost: insta buy eye price (more expensive) for IB, sell offer for BO
-  const spawnSO=eyes*p('SUMMONING_EYE').so;  // buy offer (cheaper to spawn)
-  const spawnIS=eyes*p('SUMMONING_EYE').is;  // insta buy (more expensive to spawn)
+  const spawnSO=eyes*p('SUMMONING_EYE').is;  // sell offer mode = buy order eyes = insta sell price
+  const spawnIS=eyes*p('SUMMONING_EYE').so;  // insta sell mode = instant buy eyes = sell offer price
 
   lastTotals={so:totalSO,is:totalIS,spawnSO,spawnIS,numDrags};
   sortCol=-1;
@@ -606,10 +620,8 @@ function setPriceType(v){
   priceMode=v;
   document.getElementById('btnSellOffer').classList.toggle('active',v==='sellOffer');
   document.getElementById('btnInstaSell').classList.toggle('active',v==='instaSell');
-  // Update table headers
   const isSO=v==='sellOffer';
   document.getElementById('th4').textContent=isSO?'Coins (Sell Offer)':'Coins (Insta Sell)';
-  document.getElementById('th5').textContent=isSO?'Spawning Cost (Buy Offer)':'Spawning Cost (Insta Buy)';
   renderBanner();
   renderTable();
 }
@@ -644,19 +656,18 @@ function renderTable(){
   if(!lastRows.length)return;
   const numDrags=lastTotals.numDrags;
   const isSO=priceMode==='sellOffer';
-  const div=viewMode==='perDragon'?1:numDrags;
   const isOverall=viewMode==='overall';
 
   let rows=[...lastRows];
-  if(sortCol>=0){
+  if(sortCol===0){
+    rows = sortDir===-1 ? [...lastRows] : [...lastRows].reverse();
+  } else if(sortCol>0){
     rows.sort((a,b)=>{
       let va,vb;
-      if(sortCol===0){va=a.name;vb=b.name;return sortDir*(va<vb?-1:va>vb?1:0);}
-      if(sortCol===1){va=RARITY_ORDER[a.rarity];vb=RARITY_ORDER[b.rarity];}
+      if(sortCol===1){va=RARITY_ORDER[a.rarity];vb=RARITY_ORDER[b.rarity];return sortDir*-1*(va-vb);}
       else if(sortCol===2){va=a.drops;vb=b.drops;}
       else if(sortCol===3){va=a.drops*numDrags;vb=b.drops*numDrags;}
       else if(sortCol===4){va=isSO?a.so:a.is;vb=isSO?b.so:b.is;}
-      else if(sortCol===5){va=isSO?a.soPrice:a.isPrice;vb=isSO?b.soPrice:b.isPrice;}
       return sortDir*(va-vb);
     });
   }
@@ -664,41 +675,31 @@ function renderTable(){
   let totalSO=0,totalIS=0;
   lastRows.forEach(r=>{totalSO+=r.so;totalIS+=r.is;});
   const income=isSO?totalSO:totalIS;
-  const spawn=isSO?lastTotals.spawnSO:lastTotals.spawnIS;
 
-  // Column 4 = coins made, column 5 = spawning cost per item (price per unit shown)
-  const col4label=isSO?'Coins (Sell Offer)':'Coins (Insta Sell)';
-  const col5label=isSO?'Unit Price (Buy Offer)':'Unit Price (Insta Buy)';
-  document.getElementById('th4').textContent=col4label;
-  document.getElementById('th5').textContent=col5label;
+  document.getElementById('th4').textContent=isSO?'Coins (Sell Offer)':'Coins (Insta Sell)';
 
   const glowClass=r=>r.rarity==='legendary'?'glow-legendary':r.rarity==='epic'?'glow-epic':'';
 
   document.getElementById('dropsTable').innerHTML=rows.map(r=>{
     const coins=isSO?r.so:r.is;
-    const unitP=isSO?r.soPrice:r.isPrice;
     const coinsDisp=isOverall?coins*numDrags:coins;
     return`<tr class="${glowClass(r)}">
       <td><span class="rarity-dot dot-${r.rarity}"></span>${r.name}</td>
       <td class="rarity-${r.rarity}" style="text-transform:capitalize">${r.rarity}</td>
       <td>${fmtN(r.drops)}</td>
-      <td>${isOverall?fmtN(r.drops*numDrags,2):fmtN(r.drops)}</td>
+      <td>${fmtN(r.drops*numDrags,2)}</td>
       <td>${fmt(coinsDisp)}</td>
-      <td>${fmt(unitP)}</td>
     </tr>`;
   }).join('')+`
     <tr class="total-row">
-      <td colspan="2">Total</td>
-      <td>—</td>
-      <td>${isOverall?numDrags:'1 dragon'}</td>
-      <td>${fmt(isOverall?income*numDrags:income)}</td>
-      <td>Spawn: ${fmt(isOverall?spawn*numDrags:spawn)}</td>
+      <td colspan="4">Total</td>
+      <td style="text-align:right">${fmt(isOverall?income*numDrags:income)}</td>
     </tr>`;
 }
 
 // ── Sort ──────────────────────────────────────────────────────────────────────
 function sortTable(col){
-  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=-1;}
   document.querySelectorAll('thead th').forEach((th,i)=>{
     th.classList.remove('sort-asc','sort-desc');
     if(i===col)th.classList.add(sortDir===1?'sort-asc':'sort-desc');
@@ -707,16 +708,59 @@ function sortTable(col){
 }
 
 // ── Prices Table ──────────────────────────────────────────────────────────────
+let pricesSortCol=-1,pricesSortDir=-1;
+let pricesData=[];
+
 function renderPricesTable(){
-  document.getElementById('pricesTable').innerHTML=BAZAAR_IDS.map(id=>{
-    const pr=prices[id]||{};
-    const spread=pr.is&&pr.so?((pr.is-pr.so)/pr.is*100).toFixed(2)+'%':'—';
-    return`<tr><td>${ITEM_NAMES[id]||id}</td><td>${fmt(pr.so)}</td><td>${fmt(pr.is)}</td><td>${spread}</td></tr>`;
-  }).join('');
+  pricesData=BAZAAR_IDS.map(id=>{
+    const pr=prices[id]||{so:0,is:0};
+    const spread=pr.is&&pr.so?((pr.is-pr.so)/pr.is*100):null;
+    return{id,name:ITEM_NAMES[id]||id,so:pr.so,is:pr.is,spread};
+  });
+  renderPricesSorted();
   document.getElementById('lastUpdated').textContent='Last updated: '+new Date().toLocaleTimeString();
 }
 
+function renderPricesSorted(){
+  let rows=[...pricesData];
+  if(pricesSortCol>=0){
+    rows.sort((a,b)=>{
+      let va,vb;
+      if(pricesSortCol===0){va=a.name;vb=b.name;return pricesSortDir*(va<vb?-1:va>vb?1:0);}
+      else if(pricesSortCol===1){va=a.so;vb=b.so;}
+      else if(pricesSortCol===2){va=a.is;vb=b.is;}
+      else if(pricesSortCol===3){va=a.spread??-999;vb=b.spread??-999;}
+      return pricesSortDir*(va-vb);
+    });
+  }
+  document.getElementById('pricesTable').innerHTML=rows.map(r=>`
+    <tr>
+      <td>${r.name}</td>
+      <td>${fmt(r.so)}</td>
+      <td>${fmt(r.is)}</td>
+      <td>${r.spread!==null?r.spread.toFixed(2)+'%':'—'}</td>
+    </tr>`).join('');
+}
+
+function sortPrices(col){
+  if(pricesSortCol===col)pricesSortDir*=-1;else{pricesSortCol=col;pricesSortDir=-1;}
+  document.querySelectorAll('#pricesTableEl thead th').forEach((th,i)=>{
+    th.classList.remove('sort-asc','sort-desc');
+    if(i===col)th.classList.add(pricesSortDir===1?'sort-asc':'sort-desc');
+  });
+  renderPricesSorted();
+}
+
 // ── Graph ─────────────────────────────────────────────────────────────────────
+// Range defaults per axis
+const GRAPH_RANGES={mf:{min:100,max:500},eyePrice:{min:1,max:2}};
+
+function updateGraphRange(){
+  const xVar=document.getElementById('graphVar').value;
+  document.getElementById('graphMin').value=GRAPH_RANGES[xVar].min;
+  document.getElementById('graphMax').value=GRAPH_RANGES[xVar].max;
+}
+
 let profitChart=null;
 function calcProfitGraph(mf,eyePriceMil,eyes,pl,pos,relDmg,endermite,piper){
   const d=calcDrops(eyes,mf,pl,pos,relDmg,piper);
@@ -725,11 +769,17 @@ function calcProfitGraph(mf,eyePriceMil,eyes,pl,pos,relDmg,endermite,piper){
   const wtFragSO=supProb*p('SUPERIOR_DRAGON_FRAGMENT').so+(1-supProb)*avgFrag.so;
   const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
   const armAltar=calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,35,endermite,avgFrag.so,avgFrag.is);
-  const chestSO=d.chest*(1/25*12e6+24/25*armAltar.totalSO);
-  const legsSO=d.legs*(1/25*11e6+24/25*armAltar.totalSO);
-  const helmSO=d.helm*(1/25*8e6+24/25*armAltar.totalSO);
-  const bootsSO=d.boots*(1/25*7e6+24/25*armAltar.totalSO);
-  const totalSO=480e6*d.leg+150e6*d.epic+d.horn*p('DRAGON_HORN').so+d.aotd*aotdAltar.totalSO+d.claw*p('DRAGON_CLAW').so+chestSO+legsSO+helmSO+bootsSO+d.frags*wtFragSO+d.enchPearls*p('ENCHANTED_ENDER_PEARL').so+d.pearls*p('ENDER_PEARL').so;
+  const supChest=(parseFloat(document.getElementById('supChest').value)||11)*1e6;
+  const supLegs =(parseFloat(document.getElementById('supLegs').value)||10)*1e6;
+  const supHelm =(parseFloat(document.getElementById('supHelm').value)||7)*1e6;
+  const supBoots=(parseFloat(document.getElementById('supBoots').value)||6)*1e6;
+  const chestSO=d.chest*(1/25*supChest+24/25*armAltar.totalSO);
+  const legsSO=d.legs*(1/25*supLegs+24/25*armAltar.totalSO);
+  const helmSO=d.helm*(1/25*supHelm+24/25*armAltar.totalSO);
+  const bootsSO=d.boots*(1/25*supBoots+24/25*armAltar.totalSO);
+  const legPetM=(parseFloat(document.getElementById('legPetPrice').value)||480)*1e6;
+  const epicPetM=(parseFloat(document.getElementById('epicPetPrice').value)||150)*1e6;
+  const totalSO=legPetM*d.leg+epicPetM*d.epic+d.horn*p('DRAGON_HORN').so+d.aotd*aotdAltar.totalSO+d.claw*p('DRAGON_CLAW').so+chestSO+legsSO+helmSO+bootsSO+d.frags*getAvgNonSupFrag().so+d.enchPearls*p('ENCHANTED_ENDER_PEARL').so+d.pearls*p('ENDER_PEARL').so;
   return totalSO-eyes*eyePriceMil*1e6;
 }
 
@@ -739,33 +789,134 @@ function renderGraph(){
   const gMax=parseFloat(document.getElementById('graphMax').value);
   const gEyePrice=parseFloat(document.getElementById('graphEyePrice').value)||1.38;
   const gMF=parseFloat(document.getElementById('graphMF').value)||400;
-  const gPL=parseFloat(document.getElementById('graphPL').value)||120;
-  const gEyes=parseFloat(document.getElementById('graphEyes').value)||8;
-  const gPos=parseFloat(document.getElementById('graphPos').value)||1;
-  const gEnderm=parseFloat(document.getElementById('graphEndermite').value)||100;
-  const gPiper=document.getElementById('graphPiper').value==='1';
-  const steps=100,labels=[],data=[];
+  if(isNaN(gMin)||isNaN(gMax)||gMin>=gMax)return;
+
+  const gPL=parseFloat(document.getElementById('pl').value)||120;
+  const gEyes=parseFloat(document.getElementById('graphEyes')?document.getElementById('graphEyes').value:document.getElementById('eyes').value)||4;
+  const gPos=parseFloat(document.getElementById('pos').value)||1;
+  const gRelDmg=parseFloat(document.getElementById('relDmg').value)||100;
+  const gEnderm=parseFloat(document.getElementById('endermite').value)||100;
+  const gPiper=document.getElementById('dragPiper').checked;
+
+  const steps=150,labels=[],data=[];
   for(let i=0;i<=steps;i++){
     const val=gMin+(gMax-gMin)*(i/steps);
-    labels.push(parseFloat(val.toFixed(xVar==='mf'?0:3)).toString());
-    data.push(calcProfitGraph(xVar==='mf'?val:gMF,xVar==='eyePrice'?val:gEyePrice,gEyes,gPL,gPos,100,gEnderm,gPiper)/1e6);
+    labels.push(parseFloat(val.toFixed(xVar==='mf'?1:4)).toString());
+    data.push(calcProfitGraph(
+      xVar==='mf'?val:gMF,
+      xVar==='eyePrice'?val:gEyePrice,
+      gEyes,gPL,gPos,gRelDmg,gEnderm,gPiper
+    )/1e6);
   }
+
+  // Find breakeven
+  let breakevenVal=null,breakevenIdx=null;
+  for(let i=1;i<data.length;i++){
+    if((data[i-1]<0&&data[i]>=0)||(data[i-1]>=0&&data[i]<0)){
+      const x0=gMin+(gMax-gMin)*((i-1)/steps);
+      const x1=gMin+(gMax-gMin)*(i/steps);
+      const t=Math.abs(data[i-1])/(Math.abs(data[i-1])+Math.abs(data[i]));
+      breakevenVal=x0+(x1-x0)*t;
+      breakevenIdx=i;
+      break;
+    }
+  }
+
   const ctx=document.getElementById('profitChart').getContext('2d');
   if(profitChart)profitChart.destroy();
   const dark=document.documentElement.getAttribute('data-theme')==='dark';
   const gridCol=dark?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)';
   const txtCol=dark?'#9099b0':'#4a5270';
+
+  // Draw custom hover dot via plugin — no built-in hover points at all
+  const hoverDotPlugin={
+    id:'hoverDot',
+    afterDatasetsDraw(chart){
+      const active=chart.tooltip._active;
+      if(!active||!active.length)return;
+      const c=chart.ctx;
+      const {x,y}=active[0].element;
+      c.save();
+      // Outer ring
+      c.beginPath();c.arc(x,y,6,0,Math.PI*2);
+      c.strokeStyle='#c84a10';c.lineWidth=2;c.stroke();
+      // Inner dot
+      c.beginPath();c.arc(x,y,2.5,0,Math.PI*2);
+      c.fillStyle='#c84a10';c.fill();
+      c.restore();
+    }
+  };
+
   profitChart=new Chart(ctx,{
     type:'line',
-    data:{labels,datasets:[{label:'Profit per Dragon (mil)',data,borderWidth:2.5,pointRadius:0,tension:0.4,fill:true,
-      segment:{borderColor:c=>data[c.p0DataIndex]>=0?'#4ecb71':'#e85555',backgroundColor:c=>data[c.p0DataIndex]>=0?'rgba(78,203,113,.09)':'rgba(232,85,85,.09)'}}]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`Profit: ${c.parsed.y.toFixed(4)}m`,title:c=>`${xVar==='mf'?'Magic Find':'Eye Price (mil)'}: ${c[0].label}`}}},
+    data:{labels,datasets:[{
+      label:'Profit',data,
+      borderWidth:3,
+      pointRadius:0,
+      pointHoverRadius:0,  // disable ALL built-in hover rendering
+      pointHitRadius:40,
+      tension:0.4,fill:true,
+      segment:{
+        borderColor:c=>data[c.p0DataIndex]>=0?'#4ecb71':'#e85555',
+        backgroundColor:c=>data[c.p0DataIndex]>=0?'rgba(78,203,113,.09)':'rgba(232,85,85,.09)'
+      }
+    }]},
+    plugins:[hoverDotPlugin],
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            labelColor:c=>({borderColor:c.parsed.y>=0?'#4ecb71':'#e85555',backgroundColor:c.parsed.y>=0?'#4ecb71':'#e85555'}),
+            label:c=>`Profit: ${c.parsed.y>=0?'+':''}${c.parsed.y.toFixed(3)}m`,
+            title:c=>`${xVar==='mf'?'Magic Find':'Eye Price'}: ${c[0].label}`
+          }
+        }
+      },
       scales:{
-        x:{grid:{color:gridCol},ticks:{color:txtCol,maxTicksLimit:14},title:{display:true,text:xVar==='mf'?'Magic Find':'Summoning Eye Price (mil)',color:txtCol}},
-        y:{grid:{color:gridCol},ticks:{color:txtCol,callback:v=>v.toFixed(2)+'m'},title:{display:true,text:'Profit per Dragon (mil coins)',color:txtCol},afterDataLimits(s){s.max=Math.max(s.max,.1);s.min=Math.min(s.min,-.1);}}
-      },animation:{duration:400}}
+        x:{grid:{color:gridCol},ticks:{color:txtCol,maxTicksLimit:12},title:{display:true,text:xVar==='mf'?'Magic Find':'Eye Price (mil)',color:txtCol}},
+        y:{grid:{color:gridCol},ticks:{color:txtCol,callback:v=>v.toFixed(2)+'m'},title:{display:true,text:'Profit per Dragon (mil)',color:txtCol},afterDataLimits(s){s.max=Math.max(s.max,.1);s.min=Math.min(s.min,-.1);}}
+      },
+      animation:{duration:250}
+    }
   });
+
+  // Position breakeven badge AFTER chart renders, using canvas offset
+  const badge=document.getElementById('breakevenBadge');
+  const canvas=document.getElementById('profitChart');
+  if(!badge)return;
+
+  if(breakevenVal!==null&&breakevenIdx!==null){
+    // Wait for chart to finish drawing then get pixel coords
+    setTimeout(()=>{
+      if(!profitChart)return;
+      const meta=profitChart.getDatasetMeta(0);
+      const pt=meta.data[breakevenIdx];
+      if(!pt)return;
+      // pt.x and pt.y are pixel positions on the canvas
+      // badge parent is position:relative card div, canvas is inside it
+      const canvasRect=canvas.getBoundingClientRect();
+      const parentRect=badge.parentElement.getBoundingClientRect();
+      const x=pt.x+(canvasRect.left-parentRect.left);
+      const y=pt.y+(canvasRect.top-parentRect.top);
+      const unit=xVar==='mf'?'MF':' mil';
+      badge.innerHTML=`⬥ Breakeven: <b>${xVar==='mf'?Math.round(breakevenVal):breakevenVal.toFixed(3)}${unit}</b>`;
+      badge.style.color='var(--text)';
+      badge.style.transform='none';
+      badge.style.display='block';
+      badge.style.visibility='visible';
+      badge.style.left=(x - badge.offsetWidth/2)+'px';
+      badge.style.top=(y - badge.offsetHeight - 8)+'px';
+    },260);
+  } else {
+    badge.style.display='none';
+  }
+
+  // Hide badge on mouseenter, restore on mouseleave
+  canvas.onmouseenter=()=>{ badge.style.visibility='hidden'; };
+  canvas.onmouseleave=()=>{ badge.style.visibility='visible'; };
 }
 
 // ── Tabs & Theme ──────────────────────────────────────────────────────────────
@@ -784,6 +935,15 @@ document.getElementById('themeBtn').addEventListener('click',()=>{
 
 fetchPrices();
 setInterval(fetchPrices,60*1000);
+
+function syncMF(v){ const el=document.getElementById('graphMF'); if(el)el.value=v; }
+function syncEyes(v){ const el=document.getElementById('graphEyes'); if(el)el.value=v; }
+
+let autoUpdateTimer=null;
+function autoUpdate(){
+  clearTimeout(autoUpdateTimer);
+  autoUpdateTimer=setTimeout(()=>{ calculate(); renderGraph(); },150);
+}
 </script>
 </body>
 </html>
