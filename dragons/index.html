@@ -29,8 +29,10 @@
 :root[data-theme="arctic-light"]{--bg:#eef6ff;--bg2:#f5faff;--bg3:#e4f0ff;--border:#a0c8e8;--text:#081828;--text2:#305878;--text3:#6088a8;--green:#107868;--red:#cc3322;--gold:#887700;--sunset1:#1070aa;--sunset2:#085588;--sunset3:#1090cc;--legendary:#887700;--epic:#5030a0;--rare:#1070aa;--uncommon:#107868;--common:#406888;--card-shadow:0 4px 24px rgba(0,60,120,.1)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
-body.custom-bg{background-color:transparent!important}
-body.custom-bg::after{content:'';position:fixed;inset:-40px;background-image:var(--custom-bg-img);background-size:cover;background-position:center;filter:blur(var(--custom-bg-blur,0px)) brightness(var(--custom-bg-bright,0.4));z-index:-1;transition:filter .3s}
+body.custom-bg{background-color:var(--bg)!important}
+body.custom-bg .container{position:relative;z-index:1}
+.custom-bg-layer{display:none;position:fixed;inset:-40px;background-size:cover;background-position:center;z-index:0;transition:filter .3s}
+body.custom-bg .custom-bg-layer{display:block}
 /* New preset bg theme CSS */
 :root[data-theme="candycane"]{--bg:#1a0808;--bg2:rgba(36,14,14,.92);--bg3:#301414;--border:#602020;--text:#ffe8e8;--text2:#d09090;--text3:#905050;--green:#80ff80;--red:#ff4444;--gold:#ffd0d0;--sunset1:#ff3333;--sunset2:#ff8888;--sunset3:#ffbbbb;--legendary:#ffd0d0;--epic:#ff88ff;--rare:#ff8888;--uncommon:#80ff80;--common:#a07070;--card-shadow:0 4px 32px rgba(180,0,0,.5)}
 :root[data-theme="galaxy"]{--bg:#050510;--bg2:rgba(10,10,32,.9);--bg3:#10102c;--border:#202050;--text:#e8e8ff;--text2:#9090d0;--text3:#505090;--green:#80ffb0;--red:#ff6688;--gold:#ffe080;--sunset1:#a0a0ff;--sunset2:#7070ff;--sunset3:#c0c0ff;--legendary:#ffe080;--epic:#ff80ff;--rare:#80a0ff;--uncommon:#80ffb0;--common:#7070a0;--card-shadow:0 4px 40px rgba(0,0,120,.6)}
@@ -58,7 +60,7 @@ header{padding:26px 0 18px;border-bottom:1px solid var(--border);margin-bottom:2
 .tab-content{display:none}.tab-content.active{display:block;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:var(--card-shadow)}
-.card-title{font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title{font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sunset2);margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .card-title::after{content:'';flex:1;height:1px;background:var(--border)}
 .main-grid{display:grid;grid-template-columns:285px 1fr;gap:18px;align-items:start}
 .inputs-stack{display:flex;flex-direction:column;gap:12px}
@@ -115,7 +117,7 @@ td:first-child{text-align:left;color:var(--text)}
 td:nth-child(2){text-align:left}
 
 /* Altar */
-.altar-section-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:18px 0 10px}
+.altar-section-title{font-family:"Cinzel",serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sunset2);margin:18px 0 10px}
 .altar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px}
 .altar-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px;display:flex;flex-direction:column;gap:5px}
 .altar-card-name{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3)}
@@ -148,17 +150,28 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
 </style>
 </head>
 <body>
+<div class="custom-bg-layer" id="customBgLayer"></div>
 <div class="container">
   <header>
     <div class="header-inner">
       <div class="logo">
         <h1>⚔ Dragon Calculator</h1>
-        <p>Hypixel SkyBlock · Live Profit Analyser</p>
+        <p>Hypixel SkyBlock · Live Profit Analyser · <a href="https://mrlancus.github.io/skyblock/" style="color:var(--sunset1);text-decoration:none;font-weight:600;letter-spacing:.08em" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">mrlancus tools ↗</a></p>
       </div>
       <div class="header-right">
         <div class="price-status">
           <div class="status-dot loading" id="statusDot"></div>
           <span id="statusText">Fetching prices...</span>
+        </div>
+        <div style="position:relative">
+          <button class="theme-btn" id="feedbackBtn" title="About" style="font-size:12px;width:auto;padding:0 12px;font-weight:600" onclick="toggleFeedback()">About</button>
+          <div id="feedbackDropdown" style="display:none;position:absolute;right:0;top:44px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;width:300px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:300;font-size:13px;line-height:1.8;color:var(--text2)">
+            <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:12px">Dragon Calculator</div>
+            <p style="margin-bottom:10px">Hi! This is a free, open-source calculator for dragons – the best part of Hypixel SkyBlock.</p>
+            <p style="margin-bottom:10px">Please <a href="https://github.com/mrlancus/skyblock/discussions" target="_blank" style="color:var(--sunset1);text-decoration:none;font-weight:500">report any bugs or suggestions</a> – every idea is welcome!</p>
+            <p style="margin-bottom:16px">Feel free to ping me on Discord or add me on Hypixel if you need anything!<br><span style="color:var(--sunset1);font-weight:600">Username: mrlancus</span></p>
+            <div style="border-top:1px solid var(--border);padding-top:12px;font-size:11px;color:var(--text3)">Not affiliated with Hypixel · Prices via Hypixel Bazaar API</div>
+          </div>
         </div>
         <button class="theme-btn" id="settingsBtn" title="Settings" style="font-size:18px">⚙</button>
       </div>
@@ -196,8 +209,7 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
         </div>
         <div class="srow">
           <div class="srow-lbl">Brightness</div>
-          <input type="range" id="setBgBright" min="10" max="80" value="35" style="width:130px" oninput="applyCustomBg()">
-        </div>
+          <input type="range" id="setBgBright" min="10" max="80" value="35" style="width:130px" oninput="applyCustomBg()">        </div>
         <button onclick="clearCustomBg()" style="padding:6px 14px;background:rgba(232,85,85,.1);border:1px solid rgba(232,85,85,.3);border-radius:7px;color:var(--red);font-size:12px;cursor:pointer;margin-top:4px">Clear Background</button>
       </div>
       <div>
@@ -263,7 +275,7 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
     <div class="main-grid">
       <div class="inputs-stack">
         <div class="card">
-          <div class="card-title">Your Stats</div>
+          <div class="card-title">Your Combat Stats</div>
           <div class="input-group">
             <div class="input-row">
               <div><label>Magic Find</label><input type="number" id="mf" value="400" oninput="syncMF(this.value);autoUpdate()"></div>
@@ -281,7 +293,7 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
         </div>
 
         <div class="card">
-          <div class="card-title">Settings</div>
+          <div class="card-title">Run Settings</div>
           <input type="hidden" id="legPetPrice" value="480">
           <input type="hidden" id="epicPetPrice" value="150">
           <input type="hidden" id="supChest" value="11">
@@ -353,11 +365,11 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
   <!-- ALTAR -->
   <div class="tab-content" id="tab-altar">
     <div class="card">
-      <div class="card-title">Draconic Altar Expected Returns</div>
+      <div class="card-title">Draconic Altar — Expected Returns</div>
       <p style="font-size:13px;color:var(--text2);margin-bottom:4px">Expected coin value from sacrificing items at the Draconic Altar, using live Bazaar prices.</p>
-      <div class="altar-section-title">Aspect of the Dragons Sacrifice</div>
+      <div class="altar-section-title">Sacrifice: Aspect of the Dragons</div>
       <div id="altarAOTD" class="altar-grid"><div style="color:var(--text3);font-size:13px">Loading...</div></div>
-      <div class="altar-section-title" style="margin-top:24px">Non-Superior Armour Sacrifice</div>
+      <div class="altar-section-title" style="margin-top:24px">Sacrifice: Non-Superior Dragon Armour</div>
       <p style="font-size:12px;color:var(--text3);margin-bottom:10px">All non-superior dragon armour gives the same bonus item chances. Superior armour is sold directly.</p>
       <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap" id="altarPieceBtns">
         <button class="tab active" style="font-size:12px;padding:5px 13px" onclick="setAltarPiece('chestplate',this)">Chestplate</button>
@@ -379,7 +391,7 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
       </div>
     </div>
     <div class="card" style="margin-bottom:14px">
-      <div class="card-title">Superior Armour Prices (mil)</div>
+      <div class="card-title">Superior Armour Sell Prices (mil)</div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
         <div><label>Chestplate</label><input type="number" id="supChest2" value="11" step="0.1" oninput="document.getElementById('supChest').value=this.value;autoUpdate()"></div>
         <div><label>Leggings</label><input type="number" id="supLegs2" value="10" step="0.1" oninput="document.getElementById('supLegs').value=this.value;autoUpdate()"></div>
@@ -1104,7 +1116,7 @@ const THEMES=[
   {id:'arctic',       name:'Arctic',   bg:'#060e18',bg2:'#0c1620',a1:'#40c8ff',a2:'#2080cc',light:false},
   {id:'arctic-light', name:'Arctic',   bg:'#eef6ff',bg2:'#f5faff',a1:'#1070aa',a2:'#085588',light:true},
   {id:'candycane',    name:'Candy Cane',bg:'#1a0808',bg2:'#240e0e',a1:'#ff3333',a2:'#ff8888',light:false,
-   presetBg:'https://images.unsplash.com/photo-1576158674803-e0d7e9f3ef82?w=1920&q=80',presetBlur:10,presetBright:22},
+   presetBg:'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=1920&q=80',presetBlur:10,presetBright:22},
   {id:'galaxy',       name:'Galaxy',   bg:'#050510',bg2:'#0a0a20',a1:'#a0a0ff',a2:'#7070ff',light:false,
    presetBg:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1920&q=80',presetBlur:3,presetBright:35},
   {id:'forest',       name:'Forest',   bg:'#060e06',bg2:'#0a160a',a1:'#60d060',a2:'#30a030',light:false,
@@ -1188,10 +1200,10 @@ function applyCustomBg(){
   const url=document.getElementById('setBgUrl').value.trim();
   const blur=document.getElementById('setBgBlur').value;
   const bright=document.getElementById('setBgBright').value;
+  const layer=document.getElementById('customBgLayer');
   if(url){
-    document.documentElement.style.setProperty('--custom-bg-img',`url('${url}')`);
-    document.documentElement.style.setProperty('--custom-bg-blur',blur+'px');
-    document.documentElement.style.setProperty('--custom-bg-bright',(bright/100).toString());
+    layer.style.backgroundImage=`url('${url}')`;
+    layer.style.filter=`blur(${blur}px) brightness(${bright/100})`;
     document.body.classList.add('custom-bg');
   } else {
     clearCustomBg();
@@ -1201,10 +1213,20 @@ function applyCustomBg(){
 
 function clearCustomBg(){
   document.getElementById('setBgUrl').value='';
+  document.getElementById('customBgLayer').style.backgroundImage='';
   document.body.classList.remove('custom-bg');
   saveAll();
 }
 
+function toggleFeedback(){
+  const d=document.getElementById('feedbackDropdown');
+  d.style.display=d.style.display==='none'?'block':'none';
+}
+document.addEventListener('click',e=>{
+  if(!document.getElementById('feedbackBtn').contains(e.target)&&!document.getElementById('feedbackDropdown').contains(e.target)){
+    document.getElementById('feedbackDropdown').style.display='none';
+  }
+});
 function openSettings(){ document.getElementById('settingsOverlay').classList.add('open'); }
 function closeSettings(){ document.getElementById('settingsOverlay').classList.remove('open'); }
 document.getElementById('settingsBtn').addEventListener('click',openSettings);
@@ -1265,7 +1287,12 @@ function loadAll(){
     if(s.theme){currentTheme=s.theme;document.documentElement.setAttribute('data-theme',s.theme);}
     if(s.themeMode){themeMode=s.themeMode;document.getElementById('tmDark').classList.toggle('active',s.themeMode==='dark');document.getElementById('tmLight').classList.toggle('active',s.themeMode==='light');}
     if(s.dp!==undefined){settingDp=s.dp;document.getElementById('setDp').value=s.dp;document.getElementById('dpVal').textContent=s.dp;}
-    if(s.bgUrl){document.getElementById('setBgUrl').value=s.bgUrl;document.getElementById('setBgBlur').value=s.bgBlur||8;document.getElementById('setBgBright').value=s.bgBright||35;applyCustomBg();}
+    if(s.bgUrl){
+      document.getElementById('setBgUrl').value=s.bgUrl;
+      document.getElementById('setBgBlur').value=s.bgBlur||8;
+      document.getElementById('setBgBright').value=s.bgBright||35;
+      applyCustomBg();
+    }
     if(s.raw!==undefined){settingRaw=s.raw;document.getElementById('setRaw').checked=s.raw;}
     if(s.compact!==undefined){settingCompact=s.compact;document.getElementById('setCompact').checked=s.compact;document.body.classList.toggle('compact',s.compact);}
     if(s.autoCalc!==undefined){settingAutoCalc=s.autoCalc;document.getElementById('setAutoCalc').checked=s.autoCalc;}
