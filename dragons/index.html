@@ -470,7 +470,7 @@ const ITEM_NAMES={SUMMONING_EYE:'Summoning Eye',ESSENCE_DRAGON:'Dragon Essence',
 async function fetchPrices(){
   setStatus('loading','Fetching prices...');
   try{
-    const res=await fetch('https://hypixelapi.lucas-alexander-pilu.workers.dev/bazaar/');
+    const res=await fetch('https://hypixelapi.lucas-alexander-pilu.workers.dev/bazaar');
     const data=await res.json();
     if(!data.success)throw new Error();
     const allKeys=Object.keys(data.products);
