@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dragon Profit Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root[data-theme="dark"]{--bg:#0a0c10;--bg2:#111318;--bg3:#181c24;--border:#2a2f3d;--text:#e8eaf0;--text2:#9099b0;--text3:#5a6278;--green:#4ecb71;--red:#e85555;--gold:#f0c060;--sunset1:#ff6b35;--sunset2:#f7931e;--sunset3:#ffcd3c;--legendary:#ffaa00;--epic:#bb44ff;--rare:#5588ff;--uncommon:#55dd55;--common:#999999;--card-shadow:0 4px 32px rgba(0,0,0,.5)}
+:root[data-theme="light"]{--bg:#f0f2f8;--bg2:#fff;--bg3:#e8ebf5;--border:#d0d5e8;--text:#1a1e2e;--text2:#4a5270;--text3:#8a92b0;--green:#1a9940;--red:#c83030;--gold:#b07820;--sunset1:#cc4010;--sunset2:#bb6000;--sunset3:#997700;--legendary:#cc8800;--epic:#9900cc;--rare:#2244cc;--uncommon:#228822;--common:#555;--card-shadow:0 4px 24px rgba(0,0,0,.1)}
+:root[data-theme="candy"]{--bg:#1a0a1e;--bg2:#221228;--bg3:#2d1a35;--border:#4a2a55;--text:#fce8ff;--text2:#d4a8e8;--text3:#9060a8;--green:#a0f0b0;--red:#ff6688;--gold:#ffcce0;--sunset1:#ff6eb4;--sunset2:#d44eaa;--sunset3:#ff9ee8;--legendary:#ffcc44;--epic:#ff6eb4;--rare:#88aaff;--uncommon:#88ffcc;--common:#cc99cc;--card-shadow:0 4px 32px rgba(80,0,80,.4)}
+:root[data-theme="candy-light"]{--bg:#fff0fa;--bg2:#fff8ff;--bg3:#fce8f8;--border:#e8b0d8;--text:#3a1030;--text2:#8a4070;--text3:#c080a8;--green:#208840;--red:#cc2244;--gold:#aa6010;--sunset1:#cc4488;--sunset2:#aa2266;--sunset3:#ee66aa;--legendary:#aa7700;--epic:#8822cc;--rare:#4466cc;--uncommon:#226644;--common:#886688;--card-shadow:0 4px 24px rgba(180,0,120,.12)}
+:root[data-theme="ocean"]{--bg:#040e18;--bg2:#071520;--bg3:#0c1f2e;--border:#1a3a50;--text:#d0f0ff;--text2:#7ab8d8;--text3:#3a6888;--green:#40e0b0;--red:#ff6655;--gold:#ffe080;--sunset1:#00b8e0;--sunset2:#0088c8;--sunset3:#40e0ff;--legendary:#ffe080;--epic:#c080ff;--rare:#40c0ff;--uncommon:#40e0b0;--common:#6090a8;--card-shadow:0 4px 32px rgba(0,20,40,.6)}
+:root[data-theme="ocean-light"]{--bg:#e8f4ff;--bg2:#f0f8ff;--bg3:#d8ecf8;--border:#90c0e0;--text:#082040;--text2:#306080;--text3:#6090b0;--green:#107050;--red:#cc3322;--gold:#886600;--sunset1:#0070a0;--sunset2:#005580;--sunset3:#0090c0;--legendary:#886600;--epic:#6040aa;--rare:#1060cc;--uncommon:#107050;--common:#406080;--card-shadow:0 4px 24px rgba(0,60,120,.1)}
+:root[data-theme="emerald"]{--bg:#040e08;--bg2:#071510;--bg3:#0c1f14;--border:#1a3a22;--text:#d0ffd8;--text2:#7ab888;--text3:#3a6848;--green:#40e070;--red:#ff6655;--gold:#ffe080;--sunset1:#20c060;--sunset2:#10a040;--sunset3:#60ff90;--legendary:#ffe080;--epic:#c080ff;--rare:#40a0ff;--uncommon:#40ff80;--common:#609068;--card-shadow:0 4px 32px rgba(0,20,8,.6)}
+:root[data-theme="emerald-light"]{--bg:#eefff0;--bg2:#f8fff8;--bg3:#e0f8e4;--border:#90d0a0;--text:#082010;--text2:#306040;--text3:#60a070;--green:#108040;--red:#cc3322;--gold:#887700;--sunset1:#108840;--sunset2:#0a6030;--sunset3:#20b060;--legendary:#887700;--epic:#5030a0;--rare:#1050cc;--uncommon:#108040;--common:#408050;--card-shadow:0 4px 24px rgba(0,60,20,.1)}
+:root[data-theme="void"]{--bg:#000;--bg2:#080808;--bg3:#101010;--border:#222;--text:#e0e0e0;--text2:#888;--text3:#444;--green:#00ff80;--red:#ff2040;--gold:#ffd000;--sunset1:#cc00ff;--sunset2:#9900cc;--sunset3:#ff00cc;--legendary:#ffd000;--epic:#cc00ff;--rare:#0080ff;--uncommon:#00ff80;--common:#555;--card-shadow:0 4px 40px rgba(0,0,0,.8)}
+:root[data-theme="parchment"]{--bg:#f5f0e8;--bg2:#faf7f0;--bg3:#ece6d8;--border:#ccc0a8;--text:#2a1f0e;--text2:#6a5040;--text3:#9a8070;--green:#2a7a30;--red:#aa2020;--gold:#886010;--sunset1:#8b4513;--sunset2:#a0522d;--sunset3:#cd853f;--legendary:#886010;--epic:#6040a0;--rare:#2040a0;--uncommon:#206030;--common:#706050;--card-shadow:0 4px 24px rgba(80,40,0,.12)}
+:root[data-theme="aurora"]{--bg:#060818;--bg2:#0d1228;--bg3:#141a38;--border:#2a2e60;--text:#e8eeff;--text2:#9098d8;--text3:#5058a8;--green:#40ffb8;--red:#ff5566;--gold:#ffe080;--sunset1:#8844ff;--sunset2:#4488ff;--sunset3:#44ffee;--legendary:#ffe080;--epic:#ff44ff;--rare:#44aaff;--uncommon:#40ffb8;--common:#7080c0;--card-shadow:0 4px 40px rgba(40,0,120,.5)}
+:root[data-theme="aurora-light"]{--bg:#f0f0ff;--bg2:#f8f8ff;--bg3:#e8e8ff;--border:#c0c0f0;--text:#101030;--text2:#404090;--text3:#8080c0;--green:#108060;--red:#cc2233;--gold:#887700;--sunset1:#5522dd;--sunset2:#2244cc;--sunset3:#2288cc;--legendary:#887700;--epic:#8800cc;--rare:#2266cc;--uncommon:#108060;--common:#6068b0;--card-shadow:0 4px 24px rgba(60,0,180,.1)}
+:root[data-theme="inferno"]{--bg:#120400;--bg2:#1e0800;--bg3:#2c0e00;--border:#5a1800;--text:#ffe8d0;--text2:#d08858;--text3:#804828;--green:#80ff80;--red:#ff4422;--gold:#ffcc00;--sunset1:#ff4400;--sunset2:#ff8800;--sunset3:#ffcc00;--legendary:#ffcc00;--epic:#ff44ff;--rare:#ff6644;--uncommon:#80ff80;--common:#a06040;--card-shadow:0 4px 40px rgba(120,20,0,.6)}
+:root[data-theme="inferno-light"]{--bg:#fff4ee;--bg2:#fff8f4;--bg3:#ffeee4;--border:#ffbb88;--text:#300800;--text2:#804020;--text3:#b07050;--green:#208040;--red:#cc2200;--gold:#996600;--sunset1:#cc3300;--sunset2:#cc6600;--sunset3:#cc9900;--legendary:#996600;--epic:#882288;--rare:#cc4422;--uncommon:#208040;--common:#906040;--card-shadow:0 4px 24px rgba(150,40,0,.12)}
+:root[data-theme="sakura"]{--bg:#120810;--bg2:#1e1018;--bg3:#2a1820;--border:#5a2840;--text:#ffe8f4;--text2:#e0a8c8;--text3:#a06888;--green:#80ffb8;--red:#ff6688;--gold:#ffd8a0;--sunset1:#ff88b8;--sunset2:#ff6699;--sunset3:#ffaad8;--legendary:#ffd8a0;--epic:#dd88ff;--rare:#88aaff;--uncommon:#80ffb8;--common:#c088a8;--card-shadow:0 4px 32px rgba(100,0,60,.5)}
+:root[data-theme="sakura-light"]{--bg:#fff5f8;--bg2:#fff8fb;--bg3:#ffeef4;--border:#f0c0d8;--text:#300818;--text2:#884468;--text3:#c088a8;--green:#208050;--red:#cc2244;--gold:#997722;--sunset1:#cc4477;--sunset2:#aa2255;--sunset3:#ee66aa;--legendary:#997722;--epic:#8822aa;--rare:#4466cc;--uncommon:#208050;--common:#906878;--card-shadow:0 4px 24px rgba(180,0,80,.1)}
+:root[data-theme="lavender"]{--bg:#0e0c18;--bg2:#161420;--bg3:#1e1c2c;--border:#3a3850;--text:#e8e4ff;--text2:#a8a0d0;--text3:#6860a0;--green:#88ffb8;--red:#ff7788;--gold:#ffd880;--sunset1:#aa88ff;--sunset2:#8866ee;--sunset3:#ccaaff;--legendary:#ffd880;--epic:#ff88dd;--rare:#88aaff;--uncommon:#88ffb8;--common:#8880b8;--card-shadow:0 4px 32px rgba(20,10,60,.5)}
+:root[data-theme="lavender-light"]{--bg:#f4f2ff;--bg2:#faf8ff;--bg3:#ece8ff;--border:#c8c0f0;--text:#180e30;--text2:#5048a0;--text3:#9088c8;--green:#208050;--red:#cc2244;--gold:#887700;--sunset1:#6644cc;--sunset2:#5533aa;--sunset3:#9966ee;--legendary:#887700;--epic:#882288;--rare:#4466cc;--uncommon:#208050;--common:#706090;--card-shadow:0 4px 24px rgba(60,20,180,.1)}
+:root[data-theme="arctic"]{--bg:#060e18;--bg2:#0c1620;--bg3:#121e2c;--border:#203848;--text:#e8f4ff;--text2:#88b8d8;--text3:#406888;--green:#40ffd8;--red:#ff5566;--gold:#ffe8a0;--sunset1:#40c8ff;--sunset2:#2080cc;--sunset3:#80e8ff;--legendary:#ffe8a0;--epic:#c088ff;--rare:#40c8ff;--uncommon:#40ffd8;--common:#5888a8;--card-shadow:0 4px 32px rgba(0,30,60,.6)}
+:root[data-theme="arctic-light"]{--bg:#eef6ff;--bg2:#f5faff;--bg3:#e4f0ff;--border:#a0c8e8;--text:#081828;--text2:#305878;--text3:#6088a8;--green:#107868;--red:#cc3322;--gold:#887700;--sunset1:#1070aa;--sunset2:#085588;--sunset3:#1090cc;--legendary:#887700;--epic:#5030a0;--rare:#1070aa;--uncommon:#107868;--common:#406888;--card-shadow:0 4px 24px rgba(0,60,120,.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+body.custom-bg{background-color:transparent!important}
+body.custom-bg::after{content:'';position:fixed;inset:-40px;background-image:var(--custom-bg-img);background-size:cover;background-position:center;filter:blur(var(--custom-bg-blur,0px)) brightness(var(--custom-bg-bright,0.4));z-index:-1;transition:filter .3s}
+/* New preset bg theme CSS */
+:root[data-theme="candycane"]{--bg:#1a0808;--bg2:rgba(36,14,14,.92);--bg3:#301414;--border:#602020;--text:#ffe8e8;--text2:#d09090;--text3:#905050;--green:#80ff80;--red:#ff4444;--gold:#ffd0d0;--sunset1:#ff3333;--sunset2:#ff8888;--sunset3:#ffbbbb;--legendary:#ffd0d0;--epic:#ff88ff;--rare:#ff8888;--uncommon:#80ff80;--common:#a07070;--card-shadow:0 4px 32px rgba(180,0,0,.5)}
+:root[data-theme="galaxy"]{--bg:#050510;--bg2:rgba(10,10,32,.9);--bg3:#10102c;--border:#202050;--text:#e8e8ff;--text2:#9090d0;--text3:#505090;--green:#80ffb0;--red:#ff6688;--gold:#ffe080;--sunset1:#a0a0ff;--sunset2:#7070ff;--sunset3:#c0c0ff;--legendary:#ffe080;--epic:#ff80ff;--rare:#80a0ff;--uncommon:#80ffb0;--common:#7070a0;--card-shadow:0 4px 40px rgba(0,0,120,.6)}
+:root[data-theme="forest"]{--bg:#060e06;--bg2:rgba(10,22,10,.92);--bg3:#102010;--border:#204020;--text:#e0ffe0;--text2:#80c080;--text3:#406040;--green:#60ff60;--red:#ff6644;--gold:#ffe080;--sunset1:#60d060;--sunset2:#30a030;--sunset3:#90f090;--legendary:#ffe080;--epic:#c080ff;--rare:#60c0ff;--uncommon:#60ff60;--common:#508050;--card-shadow:0 4px 32px rgba(0,60,0,.6)}
+:root[data-theme="sunset-bg"]{--bg:#100808;--bg2:rgba(24,14,10,.92);--bg3:#221410;--border:#503010;--text:#ffe8d0;--text2:#d09060;--text3:#a06030;--green:#80ff80;--red:#ff4422;--gold:#ffcc44;--sunset1:#ff8844;--sunset2:#ffcc44;--sunset3:#ff6622;--legendary:#ffcc44;--epic:#ff88ff;--rare:#ff9944;--uncommon:#80ff80;--common:#a07040;--card-shadow:0 4px 32px rgba(160,60,0,.5)}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 15%,rgba(255,107,53,.05) 0,transparent 55%),radial-gradient(ellipse at 85% 80%,rgba(247,147,30,.04) 0,transparent 55%);pointer-events:none;z-index:0}
+.container{max-width:1320px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+header{padding:26px 0 18px;border-bottom:1px solid var(--border);margin-bottom:26px}
+.header-inner{display:flex;align-items:center;justify-content:space-between}
+.logo h1{font-family:'Cinzel',serif;font-size:25px;font-weight:700;background:linear-gradient(120deg,var(--sunset1),var(--sunset2),var(--sunset3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo p{font-size:11px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:12px}
+.price-status{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text3)}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
+.status-dot.live{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
+.status-dot.loading{background:var(--gold);animation:pulse .7s infinite}
+.status-dot.error{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.theme-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s}
+.theme-btn:hover{border-color:var(--sunset1);color:var(--sunset1)}
+.tabs{display:flex;gap:3px;margin-bottom:22px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:4px;width:fit-content}
+.tab{padding:7px 17px;border-radius:8px;border:none;background:transparent;color:var(--text2);font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s}
+.tab.active{background:linear-gradient(120deg,var(--sunset1),var(--sunset2));color:#fff;box-shadow:0 2px 10px rgba(255,107,53,.35)}
+.tab:hover:not(.active){color:var(--text);background:var(--bg3)}
+.tab-content{display:none}.tab-content.active{display:block;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:22px;box-shadow:var(--card-shadow)}
+.card-title{font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.main-grid{display:grid;grid-template-columns:285px 1fr;gap:18px;align-items:start}
+.inputs-stack{display:flex;flex-direction:column;gap:12px}
+.input-group{display:flex;flex-direction:column;gap:9px}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+label{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:4px}
+input[type=number],select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;padding:8px 10px;outline:none;transition:border-color .2s,box-shadow .2s;-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]:focus,select:focus{border-color:var(--sunset1);box-shadow:0 0 0 3px rgba(255,107,53,.1)}
+select option{background:var(--bg2)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px}
+.toggle-label{font-size:13px;color:var(--text2)}
+.toggle{position:relative;width:38px;height:21px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bg);border:1px solid var(--border);border-radius:21px;cursor:pointer;transition:.2s}
+.toggle-slider::before{content:'';position:absolute;width:15px;height:15px;left:2px;top:2px;background:var(--text3);border-radius:50%;transition:.2s}
+.toggle input:checked+.toggle-slider{background:var(--sunset1);border-color:var(--sunset1)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(17px);background:#fff}
+.calc-btn{width:100%;padding:12px;background:linear-gradient(120deg,var(--sunset1),var(--sunset2));border:none;border-radius:10px;color:#fff;font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.08em;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(255,107,53,.3)}
+.calc-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,53,.45)}
+.calc-btn:active{transform:translateY(0)}
+
+/* Banner */
+.banner-controls{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.pill-toggle{display:flex;background:var(--bg3);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.pill-btn{padding:5px 13px;border:none;background:transparent;color:var(--text2);font-size:12px;font-family:'Inter',sans-serif;font-weight:500;cursor:pointer;transition:all .2s}
+.pill-btn.active{background:var(--sunset1);color:#fff}
+.profit-banner{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border-radius:16px;overflow:hidden;margin-bottom:14px}
+.profit-cell{background:var(--bg2);padding:15px 18px;display:flex;flex-direction:column;gap:4px}
+.profit-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+.profit-value{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.positive{color:var(--green)}.negative{color:var(--red)}.neutral{color:var(--gold)}.val-accent{color:var(--sunset2)}
+
+/* Rarities */
+.rarity-legendary{color:var(--legendary)}.rarity-epic{color:var(--epic)}.rarity-rare{color:var(--rare)}.rarity-uncommon{color:var(--uncommon)}.rarity-common{color:var(--common)}
+.rarity-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;flex-shrink:0;vertical-align:middle}
+.dot-legendary{background:var(--legendary);box-shadow:0 0 5px var(--legendary)}.dot-epic{background:var(--epic);box-shadow:0 0 5px var(--epic)}.dot-rare{background:var(--rare);box-shadow:0 0 4px var(--rare)}.dot-uncommon{background:var(--uncommon)}.dot-common{background:var(--common)}
+.glow-legendary{background:linear-gradient(90deg,rgba(255,170,0,.08),transparent);border-left:2px solid var(--legendary)}
+.glow-epic{background:linear-gradient(90deg,rgba(187,68,255,.07),transparent);border-left:2px solid var(--epic)}
+
+.results-stack{display:flex;flex-direction:column;gap:13px}
+.table-wrap{overflow-x:auto;border-radius:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{padding:8px 12px;text-align:right;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;transition:color .15s}
+thead th:hover{color:var(--text)}
+thead th:first-child,thead th:nth-child(2){text-align:left}
+thead th.sort-asc::after{content:' ↑'}
+thead th.sort-desc::after{content:' ↓'}
+tbody tr{border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s}
+tbody tr:hover{background:var(--bg3)}
+tbody tr.total-row{border-top:1px solid var(--border);font-weight:600;background:var(--bg3)}
+td{padding:8px 12px;text-align:right;color:var(--text2);font-variant-numeric:tabular-nums;white-space:nowrap}
+td:first-child{text-align:left;color:var(--text)}
+td:nth-child(2){text-align:left}
+
+/* Altar */
+.altar-section-title{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin:18px 0 10px}
+.altar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:10px}
+.altar-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:13px;display:flex;flex-direction:column;gap:5px}
+.altar-card-name{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3)}
+.altar-val{font-size:16px;font-weight:600;color:var(--sunset2);font-variant-numeric:tabular-nums}
+.altar-sub{font-size:11px;color:var(--text3)}
+
+/* Graph */
+.graph-controls{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:16px}
+.chart-container{position:relative;height:420px}
+
+.error-msg{background:rgba(232,85,85,.1);border:1px solid rgba(232,85,85,.3);border-radius:10px;padding:10px 13px;font-size:13px;color:var(--red);display:none;margin-top:8px}
+footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter-spacing:.04em;border-top:1px solid var(--border);margin-top:36px}
+@media(max-width:800px){.main-grid{grid-template-columns:1fr}.profit-banner{grid-template-columns:1fr 1fr}}
+/* Settings */
+.settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:none;justify-content:flex-end;align-items:flex-start;padding:70px 20px 0}
+.settings-overlay.open{display:flex;animation:fadeIn .2s ease}
+.settings-panel{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:24px;width:360px;max-height:80vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,.5);display:flex;flex-direction:column;gap:20px}
+.stitle{font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-bottom:10px}
+.theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tswatch{border-radius:10px;border:2px solid transparent;cursor:pointer;transition:all .2s;overflow:hidden;aspect-ratio:1}
+.tswatch.active{border-color:var(--sunset1);box-shadow:0 0 0 2px var(--sunset1)}
+.tswatch:hover{transform:scale(1.06)}
+.tswatch-inner{height:70%;padding:6px;display:flex;flex-direction:column;gap:3px}
+.tswatch-bar{height:3px;border-radius:2px}
+.tswatch-name{height:30%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.srow:last-child{border-bottom:none}
+.srow-lbl{font-size:13px;color:var(--text2)}
+.srow-sub{font-size:11px;color:var(--text3);margin-top:1px}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <h1>⚔ Dragon Calculator</h1>
+        <p>Hypixel SkyBlock · Live Profit Analyser</p>
+      </div>
+      <div class="header-right">
+        <div class="price-status">
+          <div class="status-dot loading" id="statusDot"></div>
+          <span id="statusText">Fetching prices...</span>
+        </div>
+        <button class="theme-btn" id="settingsBtn" title="Settings" style="font-size:18px">⚙</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Settings Panel -->
+  <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+    <div class="settings-panel">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:15px;font-weight:600;color:var(--text)">Settings</span>
+        <button class="theme-btn" onclick="closeSettings()" style="font-size:13px">✕</button>
+      </div>
+      <div>
+        <div class="stitle">Theme</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <div class="pill-toggle">
+            <button class="pill-btn active" id="tmDark" onclick="setThemeMode('dark')">Dark</button>
+            <button class="pill-btn" id="tmLight" onclick="setThemeMode('light')">Light</button>
+          </div>
+        </div>
+        <div class="theme-grid" id="themeGrid"></div>
+        <div class="stitle" style="margin-top:12px">With Background</div>
+        <div class="theme-grid" id="themeGridPreset"></div>
+      </div>
+      <div>
+        <div class="stitle">Custom Background</div>
+        <div class="srow">
+          <div><div class="srow-lbl">Image URL</div><div class="srow-sub">Paste any image link</div></div>
+        </div>
+        <input type="text" id="setBgUrl" placeholder="https://..." style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:12px;padding:7px 10px;outline:none;margin-bottom:8px" oninput="applyCustomBg()">
+        <div class="srow">
+          <div class="srow-lbl">Blur</div>
+          <input type="range" id="setBgBlur" min="0" max="20" value="8" style="width:130px" oninput="applyCustomBg()">
+        </div>
+        <div class="srow">
+          <div class="srow-lbl">Brightness</div>
+          <input type="range" id="setBgBright" min="10" max="80" value="35" style="width:130px" oninput="applyCustomBg()">
+        </div>
+        <button onclick="clearCustomBg()" style="padding:6px 14px;background:rgba(232,85,85,.1);border:1px solid rgba(232,85,85,.3);border-radius:7px;color:var(--red);font-size:12px;cursor:pointer;margin-top:4px">Clear Background</button>
+      </div>
+      <div>
+        <div class="stitle">Display</div>
+        <div class="srow">
+          <div><div class="srow-lbl">Decimal Places</div><div class="srow-sub">For million values (e.g. 1.234m)</div></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <input type="range" id="setDp" min="0" max="6" value="3" style="width:80px" oninput="document.getElementById('dpVal').textContent=this.value;settingDp=parseInt(this.value);if(lastRows.length)autoUpdate();saveAll()">
+            <span id="dpVal" style="font-size:13px;color:var(--text2);min-width:12px">3</span>
+          </div>
+        </div>
+        <div class="srow">
+          <div><div class="srow-lbl">Compact Mode</div><div class="srow-sub">Reduce padding</div></div>
+          <label class="toggle"><input type="checkbox" id="setCompact" onchange="applySettings()"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="srow">
+          <div><div class="srow-lbl">Show Raw Numbers</div><div class="srow-sub">Exact values instead of millions</div></div>
+          <label class="toggle"><input type="checkbox" id="setRaw" onchange="applySettings();if(lastRows.length)autoUpdate()"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="srow">
+          <div><div class="srow-lbl">Auto Calculate</div><div class="srow-sub">Update on every input change</div></div>
+          <label class="toggle"><input type="checkbox" id="setAutoCalc" checked onchange="applySettings()"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div>
+        <div class="stitle">Data</div>
+        <div class="srow">
+          <div><div class="srow-lbl">API Refresh</div></div>
+          <select id="setRefresh" onchange="applySettings()" style="width:90px;padding:5px 8px;font-size:12px">
+            <option value="60">1 min</option>
+            <option value="120">2 min</option>
+            <option value="300">5 min</option>
+          </select>
+        </div>
+        <div class="srow">
+          <div><div class="srow-lbl">Orders to Average</div></div>
+          <select id="setOrders" onchange="applySettings()" style="width:90px;padding:5px 8px;font-size:12px">
+            <option value="1">1</option>
+            <option value="3" selected>3</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="resetAll()" style="padding:9px;background:rgba(232,85,85,.1);border:1px solid rgba(232,85,85,.3);border-radius:8px;color:var(--red);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;width:100%">Reset All Settings &amp; Inputs</button>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+    <div class="tabs" style="margin-bottom:0">
+      <button class="tab active" onclick="switchTab('calculator',this)">Calculator</button>
+      <button class="tab" onclick="switchTab('altar',this)">Draconic Altar</button>
+      <button class="tab" onclick="switchTab('prices',this)">Live Prices</button>
+      <button class="tab" onclick="switchTab('graph',this)">Profit Graph</button>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="calc-btn" style="width:auto;padding:12px 48px;font-size:15px;letter-spacing:.1em" onclick="calculate();renderGraph()">Calculate</button>
+    </div>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div class="tab-content active" id="tab-calculator">
+    <div class="main-grid">
+      <div class="inputs-stack">
+        <div class="card">
+          <div class="card-title">Your Stats</div>
+          <div class="input-group">
+            <div class="input-row">
+              <div><label>Magic Find</label><input type="number" id="mf" value="400" oninput="syncMF(this.value);autoUpdate()"></div>
+              <div><label>Pet Luck</label><input type="number" id="pl" value="120" oninput="autoUpdate()"></div>
+            </div>
+            <div class="input-row">
+              <div><label>Eyes Placed</label><input type="number" id="eyes" value="4" min="1" max="8" oninput="syncEyes(this.value);autoUpdate()"></div>
+              <div><label>Position (14=0)</label><input type="number" id="pos" value="1" min="1" max="14" oninput="autoUpdate()"></div>
+            </div>
+            <div class="input-row">
+              <div><label>Relative DMG %</label><input type="number" id="relDmg" value="100" oninput="autoUpdate()"></div>
+              <div><label>Endermite Level</label><input type="number" id="endermite" value="100" min="0" max="100" oninput="autoUpdate()"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Settings</div>
+          <input type="hidden" id="legPetPrice" value="480">
+          <input type="hidden" id="epicPetPrice" value="150">
+          <input type="hidden" id="supChest" value="11">
+          <input type="hidden" id="supLegs" value="10">
+          <input type="hidden" id="supHelm" value="7">
+          <input type="hidden" id="supBoots" value="6">
+          <div class="input-group">
+            <div><label>Number of Dragons</label><input type="number" id="numDrags" value="500" oninput="autoUpdate()"></div>
+            <div class="toggle-row">
+              <span class="toggle-label">Dragon Piper</span>
+              <label class="toggle"><input type="checkbox" id="dragPiper" checked onchange="autoUpdate()"><span class="toggle-slider"></span></label>
+            </div>
+          </div>
+        </div>
+        <div class="error-msg" id="errorMsg"></div>
+      </div>
+
+      <div class="results-stack">
+        <!-- Banner controls -->
+        <div class="banner-controls">
+          <div class="pill-toggle">
+            <button class="pill-btn active" id="btnOverall" onclick="setView('overall')">Overall</button>
+            <button class="pill-btn" id="btnPerDrag" onclick="setView('perDragon')">Per Dragon</button>
+          </div>
+          <div class="pill-toggle">
+            <button class="pill-btn active" id="btnSellOffer" onclick="setPriceType('sellOffer')">Sell Offer / Buy Offer</button>
+            <button class="pill-btn" id="btnInstaSell" onclick="setPriceType('instaSell')">Insta Sell / Insta Buy</button>
+          </div>
+        </div>
+
+        <div class="profit-banner">
+          <div class="profit-cell">
+            <span class="profit-label" id="lbl-spawn">Spawning Cost (Overall)</span>
+            <span class="profit-value val-accent" id="res-spawn">—</span>
+          </div>
+          <div class="profit-cell">
+            <span class="profit-label" id="lbl-made">Coins Made (Overall)</span>
+            <span class="profit-value val-accent" id="res-made">—</span>
+          </div>
+          <div class="profit-cell">
+            <span class="profit-label" id="lbl-profit">Profit (Overall)</span>
+            <span class="profit-value neutral" id="res-profit">—</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Expected Drops</div>
+          <div class="table-wrap">
+            <table id="dropsTableEl">
+              <thead>
+                <tr>
+                  <th onclick="sortTable(0)" id="th0">Item</th>
+                  <th onclick="sortTable(1)" id="th1">Rarity</th>
+                  <th onclick="sortTable(2)" id="th2">Drops / Dragon</th>
+                  <th onclick="sortTable(3)" id="th3">Expected Drops</th>
+                  <th onclick="sortTable(4)" id="th4">Coins (Sell Offer)</th>
+                </tr>
+              </thead>
+              <tbody id="dropsTable">
+                <tr><td colspan="6" style="text-align:center;color:var(--text3);padding:28px">Enter your stats and click Calculate</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALTAR -->
+  <div class="tab-content" id="tab-altar">
+    <div class="card">
+      <div class="card-title">Draconic Altar Expected Returns</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:4px">Expected coin value from sacrificing items at the Draconic Altar, using live Bazaar prices.</p>
+      <div class="altar-section-title">Aspect of the Dragons Sacrifice</div>
+      <div id="altarAOTD" class="altar-grid"><div style="color:var(--text3);font-size:13px">Loading...</div></div>
+      <div class="altar-section-title" style="margin-top:24px">Non-Superior Armour Sacrifice</div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:10px">All non-superior dragon armour gives the same bonus item chances. Superior armour is sold directly.</p>
+      <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap" id="altarPieceBtns">
+        <button class="tab active" style="font-size:12px;padding:5px 13px" onclick="setAltarPiece('chestplate',this)">Chestplate</button>
+        <button class="tab" style="font-size:12px;padding:5px 13px" onclick="setAltarPiece('leggings',this)">Leggings</button>
+        <button class="tab" style="font-size:12px;padding:5px 13px" onclick="setAltarPiece('helmet',this)">Helmet</button>
+        <button class="tab" style="font-size:12px;padding:5px 13px" onclick="setAltarPiece('boots',this)">Boots</button>
+      </div>
+      <div id="altarArmour" class="altar-grid"><div style="color:var(--text3);font-size:13px">Loading...</div></div>
+    </div>
+  </div>
+
+  <!-- PRICES -->
+  <div class="tab-content" id="tab-prices">
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Pet Prices (mil)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div><label>Legendary Ender Dragon Pet</label><input type="number" id="legPetPrice2" value="480" step="1" oninput="document.getElementById('legPetPrice').value=this.value;autoUpdate()"></div>
+        <div><label>Epic Ender Dragon Pet</label><input type="number" id="epicPetPrice2" value="150" step="1" oninput="document.getElementById('epicPetPrice').value=this.value;autoUpdate()"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Superior Armour Prices (mil)</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div><label>Chestplate</label><input type="number" id="supChest2" value="11" step="0.1" oninput="document.getElementById('supChest').value=this.value;autoUpdate()"></div>
+        <div><label>Leggings</label><input type="number" id="supLegs2" value="10" step="0.1" oninput="document.getElementById('supLegs').value=this.value;autoUpdate()"></div>
+        <div><label>Helmet</label><input type="number" id="supHelm2" value="7" step="0.1" oninput="document.getElementById('supHelm').value=this.value;autoUpdate()"></div>
+        <div><label>Boots</label><input type="number" id="supBoots2" value="6" step="0.1" oninput="document.getElementById('supBoots').value=this.value;autoUpdate()"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Live Bazaar Prices</div>
+      <p style="font-size:12px;color:var(--text3);margin-bottom:12px">Spread = difference between sell offer and insta sell as a %. A large negative spread means low liquidity.</p>
+      <div class="table-wrap">
+        <table id="pricesTableEl">
+          <thead>
+            <tr>
+              <th onclick="sortPrices(0)" id="pth0">Item</th>
+              <th onclick="sortPrices(1)" id="pth1">Sell Offer (mil)</th>
+              <th onclick="sortPrices(2)" id="pth2">Insta Sell (mil)</th>
+              <th onclick="sortPrices(3)" id="pth3">Spread</th>
+            </tr>
+          </thead>
+          <tbody id="pricesTable"><tr><td colspan="4" style="text-align:center;color:var(--text3);padding:28px">Loading...</td></tr></tbody>
+        </table>
+      </div>
+      <p style="font-size:11px;color:var(--text3);margin-top:10px;text-align:right" id="lastUpdated"></p>
+    </div>
+  </div>
+
+  <!-- GRAPH -->
+  <div class="tab-content" id="tab-graph">
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Profit Sensitivity Graph</div>
+      <div class="graph-controls" style="grid-template-columns:repeat(auto-fill,minmax(180px,1fr))">
+        <div>
+          <label>X Axis</label>
+          <select id="graphVar" onchange="updateGraphRange();autoUpdate()">
+            <option value="mf">Magic Find</option>
+            <option value="eyePrice">Eye Price (mil)</option>
+          </select>
+        </div>
+        <div><label>Range Min</label><input type="number" id="graphMin" value="100" oninput="autoUpdate()"></div>
+        <div><label>Range Max</label><input type="number" id="graphMax" value="500" oninput="autoUpdate()"></div>
+        <div><label>Eye Price (mil)</label><input type="number" id="graphEyePrice" value="1.38" step="0.01" oninput="autoUpdate()"></div>
+        <div><label>Magic Find</label><input type="number" id="graphMF" value="400" oninput="document.getElementById('mf').value=this.value;autoUpdate()"></div>
+        <div><label>Eyes Placed</label><input type="number" id="graphEyes" value="4" min="1" max="8" oninput="document.getElementById('eyes').value=this.value;autoUpdate()"></div>
+      </div>
+    </div>
+    <div class="card" style="position:relative">
+      <div id="breakevenBadge" style="display:none;position:absolute;z-index:10;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:600;color:var(--text);pointer-events:none;transition:opacity .15s"></div>
+      <div class="chart-container"><canvas id="profitChart"></canvas></div>
+    </div>
+  </div>
+</div>
+<footer>Dragon Calculator · Prices via Hypixel Bazaar API · Not affiliated with Hypixel</footer>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let prices={};
+let lastRows=[];
+let lastTotals={so:0,is:0,spawnSO:0,spawnIS:0};
+let viewMode='overall';      // 'overall' | 'perDragon'
+let priceMode='sellOffer';   // 'sellOffer' | 'instaSell'
+let sortCol=-1,sortDir=1;
+let lastNumDrags=500;
+
+const BAZAAR_IDS=['SUMMONING_EYE','ESSENCE_DRAGON','RITUAL_RESIDUE','DRAGON_HORN','DRAGON_CLAW','ENCHANTED_ENDER_PEARL','ENDER_PEARL','SUPERIOR_DRAGON_FRAGMENT','STRONG_FRAGMENT','WISE_FRAGMENT','YOUNG_FRAGMENT','OLD_FRAGMENT','PROTECTOR_FRAGMENT','UNSTABLE_FRAGMENT'];
+const ITEM_NAMES={SUMMONING_EYE:'Summoning Eye',ESSENCE_DRAGON:'Dragon Essence',RITUAL_RESIDUE:'Ritual Residue',DRAGON_HORN:'Dragon Horn',DRAGON_CLAW:'Dragon Claw',ENCHANTED_ENDER_PEARL:'Enchanted Ender Pearl',ENDER_PEARL:'Ender Pearl',SUPERIOR_DRAGON_FRAGMENT:'Superior Dragon Fragment',STRONG_FRAGMENT:'Strong Fragment',WISE_FRAGMENT:'Wise Fragment',YOUNG_FRAGMENT:'Young Fragment',OLD_FRAGMENT:'Old Fragment',PROTECTOR_FRAGMENT:'Protector Fragment',UNSTABLE_FRAGMENT:'Unstable Fragment'};
+
+// ── Fetch ─────────────────────────────────────────────────────────────────────
+async function fetchPrices(){
+  setStatus('loading','Fetching prices...');
+  try{
+    const res=await fetch('https://hypixelapi.lucas-alexander-pilu.workers.dev/');
+    const data=await res.json();
+    if(!data.success)throw new Error();
+    const allKeys=Object.keys(data.products);
+    console.log('Total products in API:',allKeys.length);
+    console.log('Has STRONG_FRAGMENT:',allKeys.includes('STRONG_FRAGMENT'));
+    const N=3;
+    for(const id of BAZAAR_IDS){
+      const prod=data.products[id];if(!prod){console.log('MISSING:',id);continue;}
+      const sell=prod.buy_summary.slice(0,N),buy=prod.sell_summary.slice(0,N);
+      prices[id]={
+        so:sell.length?sell.reduce((s,o)=>s+o.pricePerUnit,0)/sell.length:0,
+        is:buy.length?buy.reduce((s,o)=>s+o.pricePerUnit,0)/buy.length:0
+      };
+    }
+    setStatus('live','Updated '+new Date().toLocaleTimeString());
+    // Sync live eye price to graph
+    if(prices['SUMMONING_EYE']){
+      const eyeP=parseFloat((prices['SUMMONING_EYE'].so/1e6).toFixed(3));
+      const el=document.getElementById('graphEyePrice');
+      if(el)el.value=eyeP;
+    }
+    renderPricesTable();
+    renderAltarCosts('chestplate');
+    document.getElementById('errorMsg').style.display='none';
+    // Recalculate with fresh prices
+    if(lastRows.length) autoUpdate();
+  }catch(e){
+    setStatus('error','API fetch failed');
+    const err=document.getElementById('errorMsg');
+    err.style.display='block';
+    err.textContent='Could not load Bazaar prices. Check your Cloudflare Worker is deployed correctly.';
+  }
+}
+function setStatus(s,t){document.getElementById('statusDot').className='status-dot '+s;document.getElementById('statusText').textContent=t;}
+function p(id){return prices[id]||{so:0,is:0};}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function clamp(v,mn=0,mx=1){return Math.max(mn,Math.min(mx,v));}
+function fmt(n,dp=3){if(n===null||n===undefined||isNaN(n))return'—';return parseFloat((n/1e6).toFixed(6)).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:dp})+'m';}
+function fmtN(n,dp=6){return isNaN(n)?'—':parseFloat(n.toFixed(dp)).toString();}
+function colorClass(n){return n>0?'positive':n<0?'negative':'neutral';}
+
+// ── Drop calculations (exact from sheet named functions) ──────────────────────
+function QUALITY(eyes,pos,relDmg){const m={1:200,2:175,3:150,4:125,5:110,6:100,7:100,8:100,9:90,10:90,11:80,12:80,13:70,14:0};return 100*eyes+(m[pos]||0)+relDmg;}
+function MF_MULT(mf){return 1+mf/100;}
+
+function calcDrops(eyes,mf,pl,pos,relDmg,piper){
+  const Q   = QUALITY(eyes, pos, relDmg);
+  const mfM = MF_MULT(mf);                  // = 1 + mf/100
+  const petM= 1 + (mf+pl)/100;              // for pet drops
+  const pip = piper ? 1.1 : 1;
+
+  // leg_edrag = max(min(IF(Q<450,0, 0.0001*eyes*petM ),1),0)
+  const leg = Math.max(0, Math.min(1,
+    Q < 450 ? 0 : 0.0001 * eyes * petM
+  ));
+
+  // epic_edrag = max(min(IF(Q<449,0, 0.0005*eyes*petM ),1),0) * (1 - leg)
+  const epic = Math.max(0, Math.min(1,
+    Q < 449 ? 0 : 0.0005 * eyes * petM
+  )) * (1 - leg);
+
+  // horn = max(min(IF(Q<448,0, 0.3*mfM ),1),0) * (1-(leg+epic)) * (0.04*(piper?1.1:1))
+  const horn = Math.max(0, Math.min(1,
+    Q < 448 ? 0 : 0.3 * mfM
+  )) * (1 - leg - epic) * (0.04 * pip);
+
+  // aotd = max(min(IF(Q<447,0, 0.03*eyes*mfM ),1),0) * (1-(leg+epic))
+  const aotd = Math.max(0, Math.min(1,
+    Q < 447 ? 0 : 0.03 * eyes * mfM
+  )) * (1 - leg - epic);
+
+  // claw = max(min(IF(Q<446,0, 0.02*eyes*mfM ),1),0) * (1-(leg+epic+aotd))
+  const claw = Math.max(0, Math.min(1,
+    Q < 446 ? 0 : 0.02 * eyes * mfM
+  )) * (1 - leg - epic - aotd);
+
+  // chestplate = max(min(IF(Q<410,0, 0.3*mfM ),1),0) * (1-(leg+epic+aotd+claw))
+  const chest = Math.max(0, Math.min(1,
+    Q < 410 ? 0 : 0.3 * mfM
+  )) * (1 - leg - epic - aotd - claw);
+
+  // leggings = max(min(IF(Q<360,0, 0.3*mfM ),1),0) * (1-(leg+epic+aotd+claw+chest))
+  const legs = Math.max(0, Math.min(1,
+    Q < 360 ? 0 : 0.3 * mfM
+  )) * (1 - leg - epic - aotd - claw - chest);
+
+  // helmet = max(min(IF(Q<295,0, 0.3*mfM ),1),0) * (1-(leg+epic+aotd+claw+chest+legs))
+  const helm = Math.max(0, Math.min(1,
+    Q < 295 ? 0 : 0.3 * mfM
+  )) * (1 - leg - epic - aotd - claw - chest - legs);
+
+  // boots = max(min( max(min(IF(Q<290,0, 0.3*mfM ),1),0) * (1 - sum(C15:C22)) ,1),0)
+  // C15:C22 in your sheet = leg, epic, horn, aotd, claw, chest, legs, helm
+  const boots = Math.max(0, Math.min(1,
+    Math.max(0, Math.min(1,
+      Q < 290 ? 0 : 0.3 * mfM
+    )) * (1 - leg - epic - horn - aotd - claw - chest - legs - helm)
+  ));
+
+  // Average quality used based on thresholds — used directly for fragments/pearls
+  const avgQ = Q > 360 ? 360 : Q >= 290 ? 330 : 250;
+  const remQ = avgQ;
+
+  // fragments = floor(remaining / 22)
+  const frags      = Math.floor(remQ / 22);
+  // ench_pearls = floor((remaining - frags*22) / 15)
+  const remQ2      = remQ - frags * 22;
+  const enchPearls = Math.floor(remQ2 / 15);
+  // pearls = floor((remaining - frags*22 - enchPearls*15) / 5)
+  const pearls     = Math.floor((remQ2 - enchPearls * 15) / 5);
+
+  return { leg, epic, horn, aotd, claw, chest, legs, helm, boots, frags, enchPearls, pearls, Q, remQ };
+}
+
+// ── Altar data ────────────────────────────────────────────────────────────────
+const AOTD_BONUS=[
+  {id:'SUPERIOR_DRAGON_FRAGMENT',name:'Superior Dragon Fragment',chance:0.80,avgAmt:12.5},
+  {id:'RITUAL_RESIDUE',name:'Ritual Residue',chance:0.1059,avgAmt:1},
+  {id:'DRAGON_CLAW',name:'Dragon Claw',chance:0.0235,avgAmt:1},
+  {id:'SUMMONING_EYE',name:'Summoning Eye',chance:0.0471,avgAmt:1},
+  {id:'DRAGON_HORN',name:'Dragon Horn',chance:0.0235,avgAmt:1},
+];
+const ARMOUR_BONUS=[
+  {id:'RITUAL_RESIDUE',name:'Ritual Residue',chance:0.1084,avgAmt:1},
+  {id:'DRAGON_HORN',name:'Dragon Horn',chance:0.0241,avgAmt:1},
+  {id:'SUMMONING_EYE',name:'Summoning Eye',chance:0.0482,avgAmt:1},
+];
+const ARMOUR_FRAG_CHANCE=0.8193,ARMOUR_FRAG_AVG=17.5;
+const ARMOUR_ESSENCE={chestplate:40,leggings:35,helmet:25,boots:20};
+const AOTD_ESSENCE=60;
+
+function getAvgNonSupFrag(){
+  const ids=['STRONG_FRAGMENT','WISE_FRAGMENT','YOUNG_FRAGMENT','OLD_FRAGMENT','PROTECTOR_FRAGMENT','UNSTABLE_FRAGMENT'];
+  let totalSO=0, totalIS=0, count=0;
+  for(const id of ids){
+    const pr=prices[id];
+    if(pr && pr.so>0){ totalSO+=pr.so; totalIS+=pr.is; count++; }
+  }
+  console.log('Frag count:',count,'avgSO:',count?totalSO/count:0,'allPrices:',JSON.stringify(prices));
+  return count ? {so:totalSO/count, is:totalIS/count} : {so:0,is:0};
+}
+
+function calcAltarValue(bonusArr,fragId,fragChance,fragAvg,essenceAmt,endermite,avgFragSO,avgFragIS){
+  const enderBonus=1+endermite*0.001;
+  let totalSO=0,totalIS=0;
+  const rows=[];
+  const essSO=p('ESSENCE_DRAGON').so*essenceAmt,essIS=p('ESSENCE_DRAGON').is*essenceAmt;
+  totalSO+=essSO;totalIS+=essIS;
+  rows.push({name:`${essenceAmt}× Dragon Essence`,so:essSO,is:essIS});
+  if(fragChance>0){
+    const fSO=fragChance*fragAvg*(fragId==='AVG'?avgFragSO:p(fragId).so);
+    const fIS=fragChance*fragAvg*(fragId==='AVG'?avgFragIS:p(fragId).is);
+    totalSO+=fSO;totalIS+=fIS;
+    rows.push({name:`Dragon Fragment (${(fragChance*100).toFixed(1)}%, avg ×${fragAvg})`,so:fSO,is:fIS});
+  }
+  for(const b of bonusArr){
+    const eff=Math.min(1,b.chance*enderBonus);
+    const bSO=eff*b.avgAmt*p(b.id).so,bIS=eff*b.avgAmt*p(b.id).is;
+    totalSO+=bSO;totalIS+=bIS;
+    rows.push({name:`${b.name} (${(b.chance*100).toFixed(2)}%)`,so:bSO,is:bIS});
+  }
+  return{rows,totalSO,totalIS};
+}
+
+let currentAltarPiece='chestplate';
+function setAltarPiece(piece,btn){
+  currentAltarPiece=piece;
+  document.querySelectorAll('#altarPieceBtns .tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAltarCosts(piece);
+}
+
+function renderAltarCosts(piece){
+  const endermite=parseFloat(document.getElementById('endermite')?.value||100);
+  const avgFrag=getAvgNonSupFrag();
+  const aotd=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
+  document.getElementById('altarAOTD').innerHTML=`
+    <div class="altar-card" style="border-color:rgba(255,107,53,.3)">
+      <div class="altar-card-name">Total Expected (Sell Offer)</div>
+      <div class="altar-val">${fmt(aotd.totalSO)}</div><div class="altar-sub">per AOTD sacrifice</div>
+    </div>
+    <div class="altar-card" style="border-color:rgba(255,107,53,.2)">
+      <div class="altar-card-name">Total Expected (Insta Sell)</div>
+      <div class="altar-val">${fmt(aotd.totalIS)}</div><div class="altar-sub">per AOTD sacrifice</div>
+    </div>
+    ${aotd.rows.map(r=>`<div class="altar-card"><div class="altar-card-name">${r.name}</div><div class="altar-val" style="font-size:14px">${fmt(r.so)}</div><div class="altar-sub">IS: ${fmt(r.is)}</div></div>`).join('')}`;
+  const ess=ARMOUR_ESSENCE[piece]||35;
+  const arm=calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ess,endermite,avgFrag.so,avgFrag.is);
+  document.getElementById('altarArmour').innerHTML=`
+    <div class="altar-card" style="border-color:rgba(255,107,53,.3)">
+      <div class="altar-card-name">Total Expected (Sell Offer)</div>
+      <div class="altar-val">${fmt(arm.totalSO)}</div><div class="altar-sub">${piece} sacrifice</div>
+    </div>
+    <div class="altar-card" style="border-color:rgba(255,107,53,.2)">
+      <div class="altar-card-name">Total Expected (Insta Sell)</div>
+      <div class="altar-val">${fmt(arm.totalIS)}</div><div class="altar-sub">${piece} sacrifice</div>
+    </div>
+    ${arm.rows.map(r=>`<div class="altar-card"><div class="altar-card-name">${r.name}</div><div class="altar-val" style="font-size:14px">${fmt(r.so)}</div><div class="altar-sub">IS: ${fmt(r.is)}</div></div>`).join('')}`;
+}
+
+// ── Calculate ─────────────────────────────────────────────────────────────────
+function calculate(){
+  const mf=parseFloat(document.getElementById('mf').value)||0;
+  const pl=parseFloat(document.getElementById('pl').value)||0;
+  const eyes=parseFloat(document.getElementById('eyes').value)||8;
+  const pos=parseFloat(document.getElementById('pos').value)||1;
+  const endermite=parseFloat(document.getElementById('endermite').value)||0;
+  const relDmg=parseFloat(document.getElementById('relDmg').value)||100;
+  const numDrags=parseFloat(document.getElementById('numDrags').value)||500;
+  const piper=document.getElementById('dragPiper').checked;
+  const legPetM=(parseFloat(document.getElementById('legPetPrice').value)||480)*1e6;
+  const epicPetM=(parseFloat(document.getElementById('epicPetPrice').value)||150)*1e6;
+  const supChestSO=(parseFloat(document.getElementById('supChest').value)||11)*1e6;
+  const supChestIS=supChestSO;
+  const supLegsSO=(parseFloat(document.getElementById('supLegs').value)||10)*1e6;
+  const supLegsIS=supLegsSO;
+  const supHelmSO=(parseFloat(document.getElementById('supHelm').value)||7)*1e6;
+  const supHelmIS=supHelmSO;
+  const supBootsSO=(parseFloat(document.getElementById('supBoots').value)||6)*1e6;
+  const supBootsIS=supBootsSO;
+  lastNumDrags=numDrags;
+
+  const d=calcDrops(eyes,mf,pl,pos,relDmg,piper);
+  console.log(`DEBUG Q=${QUALITY(eyes,pos,relDmg)} eyes=${eyes} pos=${pos} relDmg=${relDmg} mf=${mf}`, JSON.stringify(d));
+  const supProb=1/25;
+  const avgFrag=getAvgNonSupFrag();
+  const wtFragSO=avgFrag.so;
+  const wtFragIS=avgFrag.is;
+
+  const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
+  const armChest =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.chestplate,endermite,avgFrag.so,avgFrag.is);
+  const armLegs  =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.leggings,endermite,avgFrag.so,avgFrag.is);
+  const armHelm  =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.helmet,endermite,avgFrag.so,avgFrag.is);
+  const armBoots =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.boots,endermite,avgFrag.so,avgFrag.is);
+
+  // Armour: superior sold, others sacrificed at altar
+  const chestSO=d.chest*(supProb*supChestSO+(1-supProb)*armChest.totalSO);
+  const chestIS=d.chest*(supProb*supChestIS+(1-supProb)*armChest.totalIS);
+  const legsSO =d.legs *(supProb*supLegsSO +(1-supProb)*armLegs.totalSO);
+  const legsIS =d.legs *(supProb*supLegsIS +(1-supProb)*armLegs.totalIS);
+  const helmSO =d.helm *(supProb*supHelmSO +(1-supProb)*armHelm.totalSO);
+  const helmIS =d.helm *(supProb*supHelmIS +(1-supProb)*armHelm.totalIS);
+  const bootsSO=d.boots*(supProb*supBootsSO+(1-supProb)*armBoots.totalSO);
+  const bootsIS=d.boots*(supProb*supBootsIS+(1-supProb)*armBoots.totalIS);
+
+  // Correct rarities from game:
+  // leg edrag=legendary, epic edrag=epic, horn=epic, aotd=legendary, claw=rare
+  // armour=legendary, fragment=epic, ench pearl=uncommon, pearl=common
+  lastRows=[
+    {name:'Legendary Ender Dragon Pet',rarity:'legendary',drops:d.leg, so:d.leg*legPetM,   is:d.leg*legPetM},
+    {name:'Epic Ender Dragon Pet',      rarity:'epic',     drops:d.epic,so:d.epic*epicPetM,  is:d.epic*epicPetM},
+    {name:'Dragon Horn',                rarity:'epic',     drops:d.horn,so:d.horn*p('DRAGON_HORN').so,is:d.horn*p('DRAGON_HORN').is},
+    {name:'Aspect of the Dragons',      rarity:'legendary',drops:d.aotd,so:d.aotd*aotdAltar.totalSO,is:d.aotd*aotdAltar.totalIS},
+    {name:'Dragon Claw',                rarity:'rare',     drops:d.claw,so:d.claw*p('DRAGON_CLAW').so,is:d.claw*p('DRAGON_CLAW').is},
+    {name:'Dragon Chestplate',          rarity:'legendary',drops:d.chest,so:chestSO,is:chestIS},
+    {name:'Dragon Leggings',            rarity:'legendary',drops:d.legs, so:legsSO, is:legsIS},
+    {name:'Dragon Helmet',              rarity:'legendary',drops:d.helm, so:helmSO, is:helmIS},
+    {name:'Dragon Boots',               rarity:'legendary',drops:d.boots,so:bootsSO,is:bootsIS},
+    {name:'Dragon Fragment',            rarity:'epic',     drops:d.frags,so:d.frags*getAvgNonSupFrag().so,is:d.frags*getAvgNonSupFrag().is},
+    {name:'Enchanted Ender Pearl',      rarity:'uncommon', drops:d.enchPearls,so:d.enchPearls*p('ENCHANTED_ENDER_PEARL').so,is:d.enchPearls*p('ENCHANTED_ENDER_PEARL').is},
+    {name:'Ender Pearl',                rarity:'common',   drops:d.pearls,so:d.pearls*p('ENDER_PEARL').so,is:d.pearls*p('ENDER_PEARL').is},
+  ];
+
+  let totalSO=0,totalIS=0;
+  lastRows.forEach(r=>{totalSO+=r.so;totalIS+=r.is;});
+
+  // Spawning cost: insta buy eye price (more expensive) for IB, sell offer for BO
+  const spawnSO=eyes*p('SUMMONING_EYE').is;  // sell offer mode = buy order eyes = insta sell price
+  const spawnIS=eyes*p('SUMMONING_EYE').so;  // insta sell mode = instant buy eyes = sell offer price
+
+  lastTotals={so:totalSO,is:totalIS,spawnSO,spawnIS,numDrags};
+  sortCol=-1;
+  renderBanner();
+  renderTable();
+}
+
+// ── View & price mode ─────────────────────────────────────────────────────────
+function setView(v){
+  viewMode=v;
+  document.getElementById('btnOverall').classList.toggle('active',v==='overall');
+  document.getElementById('btnPerDrag').classList.toggle('active',v==='perDragon');
+  renderBanner();
+  renderTable();
+}
+
+function setPriceType(v){
+  priceMode=v;
+  document.getElementById('btnSellOffer').classList.toggle('active',v==='sellOffer');
+  document.getElementById('btnInstaSell').classList.toggle('active',v==='instaSell');
+  const isSO=v==='sellOffer';
+  document.getElementById('th4').textContent=isSO?'Coins (Sell Offer)':'Coins (Insta Sell)';
+  renderBanner();
+  renderTable();
+}
+
+function renderBanner(){
+  if(!lastRows.length)return;
+  const {so,is,spawnSO,spawnIS,numDrags}=lastTotals;
+  const overall=viewMode==='overall';
+  const div=overall?numDrags:1;
+  const sfx=overall?'(Overall)':'(Per Dragon)';
+
+  // price mode: sellOffer = sell offer income, buy offer spawning cost
+  //             instaSell = insta sell income, insta buy spawning cost
+  const income  =priceMode==='sellOffer'?so:is;
+  const spawnCost=priceMode==='sellOffer'?spawnSO:spawnIS;
+  const profit  =income-spawnCost;
+
+  document.getElementById('lbl-spawn').textContent=`Spawning Cost ${sfx}`;
+  document.getElementById('lbl-made').textContent=`Coins Made ${sfx}`;
+  document.getElementById('lbl-profit').textContent=`Profit ${sfx}`;
+
+  document.getElementById('res-spawn').textContent=fmt(spawnCost*div);
+  document.getElementById('res-made').textContent=fmt(income*div);
+  const profitEl=document.getElementById('res-profit');
+  profitEl.textContent=fmt(profit*div);
+  profitEl.className='profit-value '+colorClass(profit);
+}
+
+// ── Table render ──────────────────────────────────────────────────────────────
+const RARITY_ORDER={legendary:0,epic:1,rare:2,uncommon:3,common:4};
+function renderTable(){
+  if(!lastRows.length)return;
+  const numDrags=lastTotals.numDrags;
+  const isSO=priceMode==='sellOffer';
+  const isOverall=viewMode==='overall';
+
+  let rows=[...lastRows];
+  if(sortCol===0){
+    rows = sortDir===-1 ? [...lastRows] : [...lastRows].reverse();
+  } else if(sortCol>0){
+    rows.sort((a,b)=>{
+      let va,vb;
+      if(sortCol===1){va=RARITY_ORDER[a.rarity];vb=RARITY_ORDER[b.rarity];return sortDir*-1*(va-vb);}
+      else if(sortCol===2){va=a.drops;vb=b.drops;}
+      else if(sortCol===3){va=a.drops*numDrags;vb=b.drops*numDrags;}
+      else if(sortCol===4){va=isSO?a.so:a.is;vb=isSO?b.so:b.is;}
+      return sortDir*(va-vb);
+    });
+  }
+
+  let totalSO=0,totalIS=0;
+  lastRows.forEach(r=>{totalSO+=r.so;totalIS+=r.is;});
+  const income=isSO?totalSO:totalIS;
+
+  document.getElementById('th4').textContent=isSO?'Coins (Sell Offer)':'Coins (Insta Sell)';
+
+  const glowClass=r=>r.rarity==='legendary'?'glow-legendary':r.rarity==='epic'?'glow-epic':'';
+
+  document.getElementById('dropsTable').innerHTML=rows.map(r=>{
+    const coins=isSO?r.so:r.is;
+    const coinsDisp=isOverall?coins*numDrags:coins;
+    return`<tr class="${glowClass(r)}">
+      <td><span class="rarity-dot dot-${r.rarity}"></span>${r.name}</td>
+      <td class="rarity-${r.rarity}" style="text-transform:capitalize">${r.rarity}</td>
+      <td>${fmtN(r.drops)}</td>
+      <td>${fmtN(r.drops*numDrags,2)}</td>
+      <td>${fmt(coinsDisp)}</td>
+    </tr>`;
+  }).join('')+`
+    <tr class="total-row">
+      <td colspan="4">Total</td>
+      <td style="text-align:right">${fmt(isOverall?income*numDrags:income)}</td>
+    </tr>`;
+}
+
+// ── Sort ──────────────────────────────────────────────────────────────────────
+function sortTable(col){
+  if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=-1;}
+  document.querySelectorAll('thead th').forEach((th,i)=>{
+    th.classList.remove('sort-asc','sort-desc');
+    if(i===col)th.classList.add(sortDir===1?'sort-asc':'sort-desc');
+  });
+  renderTable();
+}
+
+// ── Prices Table ──────────────────────────────────────────────────────────────
+let pricesSortCol=-1,pricesSortDir=-1;
+let pricesData=[];
+
+function renderPricesTable(){
+  pricesData=BAZAAR_IDS.map(id=>{
+    const pr=prices[id]||{so:0,is:0};
+    const spread=pr.is&&pr.so?((pr.is-pr.so)/pr.is*100):null;
+    return{id,name:ITEM_NAMES[id]||id,so:pr.so,is:pr.is,spread};
+  });
+  renderPricesSorted();
+  document.getElementById('lastUpdated').textContent='Last updated: '+new Date().toLocaleTimeString();
+}
+
+function renderPricesSorted(){
+  let rows=[...pricesData];
+  if(pricesSortCol>=0){
+    rows.sort((a,b)=>{
+      let va,vb;
+      if(pricesSortCol===0){va=a.name;vb=b.name;return pricesSortDir*(va<vb?-1:va>vb?1:0);}
+      else if(pricesSortCol===1){va=a.so;vb=b.so;}
+      else if(pricesSortCol===2){va=a.is;vb=b.is;}
+      else if(pricesSortCol===3){va=a.spread??-999;vb=b.spread??-999;}
+      return pricesSortDir*(va-vb);
+    });
+  }
+  document.getElementById('pricesTable').innerHTML=rows.map(r=>`
+    <tr>
+      <td>${r.name}</td>
+      <td>${fmt(r.so)}</td>
+      <td>${fmt(r.is)}</td>
+      <td>${r.spread!==null?r.spread.toFixed(2)+'%':'—'}</td>
+    </tr>`).join('');
+}
+
+function sortPrices(col){
+  if(pricesSortCol===col)pricesSortDir*=-1;else{pricesSortCol=col;pricesSortDir=-1;}
+  document.querySelectorAll('#pricesTableEl thead th').forEach((th,i)=>{
+    th.classList.remove('sort-asc','sort-desc');
+    if(i===col)th.classList.add(pricesSortDir===1?'sort-asc':'sort-desc');
+  });
+  renderPricesSorted();
+}
+
+// ── Graph ─────────────────────────────────────────────────────────────────────
+// Range defaults per axis
+const GRAPH_RANGES={mf:{min:100,max:500},eyePrice:{min:1,max:2}};
+
+function updateGraphRange(){
+  const xVar=document.getElementById('graphVar').value;
+  document.getElementById('graphMin').value=GRAPH_RANGES[xVar].min;
+  document.getElementById('graphMax').value=GRAPH_RANGES[xVar].max;
+}
+
+let profitChart=null;
+function calcProfitGraph(mf,eyePriceMil,eyes,pl,pos,relDmg,endermite,piper){
+  const d=calcDrops(eyes,mf,pl,pos,relDmg,piper);
+  const supProb=1/25;
+  const avgFrag=getAvgNonSupFrag();
+  const wtFragSO=supProb*p('SUPERIOR_DRAGON_FRAGMENT').so+(1-supProb)*avgFrag.so;
+  const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
+  const armAltar=calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,35,endermite,avgFrag.so,avgFrag.is);
+  const supChest=(parseFloat(document.getElementById('supChest').value)||11)*1e6;
+  const supLegs =(parseFloat(document.getElementById('supLegs').value)||10)*1e6;
+  const supHelm =(parseFloat(document.getElementById('supHelm').value)||7)*1e6;
+  const supBoots=(parseFloat(document.getElementById('supBoots').value)||6)*1e6;
+  const chestSO=d.chest*(1/25*supChest+24/25*armAltar.totalSO);
+  const legsSO=d.legs*(1/25*supLegs+24/25*armAltar.totalSO);
+  const helmSO=d.helm*(1/25*supHelm+24/25*armAltar.totalSO);
+  const bootsSO=d.boots*(1/25*supBoots+24/25*armAltar.totalSO);
+  const legPetM=(parseFloat(document.getElementById('legPetPrice').value)||480)*1e6;
+  const epicPetM=(parseFloat(document.getElementById('epicPetPrice').value)||150)*1e6;
+  const totalSO=legPetM*d.leg+epicPetM*d.epic+d.horn*p('DRAGON_HORN').so+d.aotd*aotdAltar.totalSO+d.claw*p('DRAGON_CLAW').so+chestSO+legsSO+helmSO+bootsSO+d.frags*getAvgNonSupFrag().so+d.enchPearls*p('ENCHANTED_ENDER_PEARL').so+d.pearls*p('ENDER_PEARL').so;
+  return totalSO-eyes*eyePriceMil*1e6;
+}
+
+function renderGraph(){
+  const xVar=document.getElementById('graphVar').value;
+  const gMin=parseFloat(document.getElementById('graphMin').value);
+  const gMax=parseFloat(document.getElementById('graphMax').value);
+  const gEyePrice=parseFloat(document.getElementById('graphEyePrice').value)||1.38;
+  const gMF=parseFloat(document.getElementById('graphMF').value)||400;
+  if(isNaN(gMin)||isNaN(gMax)||gMin>=gMax)return;
+
+  const gPL=parseFloat(document.getElementById('pl').value)||120;
+  const gEyes=parseFloat(document.getElementById('graphEyes')?document.getElementById('graphEyes').value:document.getElementById('eyes').value)||4;
+  const gPos=parseFloat(document.getElementById('pos').value)||1;
+  const gRelDmg=parseFloat(document.getElementById('relDmg').value)||100;
+  const gEnderm=parseFloat(document.getElementById('endermite').value)||100;
+  const gPiper=document.getElementById('dragPiper').checked;
+
+  const steps=150,labels=[],data=[];
+  for(let i=0;i<=steps;i++){
+    const val=gMin+(gMax-gMin)*(i/steps);
+    labels.push(parseFloat(val.toFixed(xVar==='mf'?1:4)).toString());
+    data.push(calcProfitGraph(
+      xVar==='mf'?val:gMF,
+      xVar==='eyePrice'?val:gEyePrice,
+      gEyes,gPL,gPos,gRelDmg,gEnderm,gPiper
+    )/1e6);
+  }
+
+  // Find breakeven
+  let breakevenVal=null,breakevenIdx=null;
+  for(let i=1;i<data.length;i++){
+    if((data[i-1]<0&&data[i]>=0)||(data[i-1]>=0&&data[i]<0)){
+      const x0=gMin+(gMax-gMin)*((i-1)/steps);
+      const x1=gMin+(gMax-gMin)*(i/steps);
+      const t=Math.abs(data[i-1])/(Math.abs(data[i-1])+Math.abs(data[i]));
+      breakevenVal=x0+(x1-x0)*t;
+      breakevenIdx=i;
+      break;
+    }
+  }
+
+  const ctx=document.getElementById('profitChart').getContext('2d');
+  if(profitChart)profitChart.destroy();
+  const dark=document.documentElement.getAttribute('data-theme')==='dark';
+  const gridCol=dark?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)';
+  const txtCol=dark?'#9099b0':'#4a5270';
+
+  const glowPlugin={
+    id:'glowLine',
+    afterDatasetsDraw(chart){
+      const c=chart.ctx;
+      const meta=chart.getDatasetMeta(0);
+      const pts=meta.data;
+      if(!pts||!pts.length)return;
+      c.save();
+      c.lineWidth=3;
+      c.lineCap='round';c.lineJoin='round';
+      c.shadowBlur=14;
+      c.shadowColor='rgba(78,203,113,0.9)';
+      c.strokeStyle='rgba(78,203,113,0.4)';
+      c.beginPath();
+      let s=false;
+      for(let i=0;i<pts.length;i++){
+        if(data[i]>=0){if(!s){c.moveTo(pts[i].x,pts[i].y);s=true;}else c.lineTo(pts[i].x,pts[i].y);}
+        else{if(s){c.stroke();c.beginPath();s=false;}}
+      }
+      if(s)c.stroke();
+      c.shadowColor='rgba(232,85,85,0.9)';
+      c.strokeStyle='rgba(232,85,85,0.4)';
+      c.beginPath();s=false;
+      for(let i=0;i<pts.length;i++){
+        if(data[i]<0){if(!s){c.moveTo(pts[i].x,pts[i].y);s=true;}else c.lineTo(pts[i].x,pts[i].y);}
+        else{if(s){c.stroke();c.beginPath();s=false;}}
+      }
+      if(s)c.stroke();
+      c.restore();
+    }
+  };
+
+  const hoverDotPlugin={
+    id:'hoverDot',
+    afterEvent(chart,args){
+      if(args.event.type==='mousemove'||args.event.type==='mouseout'){
+        chart._hoverDotActive=chart.tooltip.getActiveElements();
+        chart.draw();
+      }
+    },
+    afterDatasetsDraw(chart){
+      const active=chart._hoverDotActive;
+      if(!active||!active.length)return;
+      const c=chart.ctx;
+      const el=active[0].element;
+      if(!el)return;
+      const accentCol=getComputedStyle(document.documentElement).getPropertyValue('--sunset1').trim()||'#ff6b35';
+      c.save();
+      c.beginPath();c.arc(el.x,el.y,6,0,Math.PI*2);
+      c.strokeStyle=accentCol;c.lineWidth=2;c.stroke();
+      c.beginPath();c.arc(el.x,el.y,2.5,0,Math.PI*2);
+      c.fillStyle=accentCol;c.fill();
+      c.restore();
+    }
+  };
+
+  profitChart=new Chart(ctx,{
+    type:'line',
+    data:{labels,datasets:[{
+      label:'Profit',data,
+      borderWidth:3,
+      pointRadius:0,
+      pointHoverRadius:0,
+      pointHitRadius:40,
+      tension:0.4,fill:true,
+      segment:{
+        borderColor:c=>data[c.p0DataIndex]>=0?'#4ecb71':'#e85555',
+        backgroundColor:c=>data[c.p0DataIndex]>=0?'rgba(78,203,113,.09)':'rgba(232,85,85,.09)'
+      }
+    }]},
+    plugins:[glowPlugin,hoverDotPlugin],
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      animation:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          callbacks:{
+            labelColor:c=>({borderColor:c.parsed.y>=0?'#4ecb71':'#e85555',backgroundColor:c.parsed.y>=0?'#4ecb71':'#e85555'}),
+            label:c=>`Profit: ${c.parsed.y>=0?'+':''}${c.parsed.y.toFixed(3)}m`,
+            title:c=>`${xVar==='mf'?'Magic Find':'Eye Price'}: ${c[0].label}`
+          }
+        }
+      },
+      scales:{
+        x:{grid:{color:gridCol},ticks:{color:txtCol,maxTicksLimit:12},title:{display:true,text:xVar==='mf'?'Magic Find':'Eye Price (mil)',color:txtCol}},
+        y:{grid:{color:gridCol},ticks:{color:txtCol,callback:v=>v.toFixed(2)+'m'},title:{display:true,text:'Profit per Dragon (mil)',color:txtCol},afterDataLimits(s){s.max=Math.max(s.max,.1);s.min=Math.min(s.min,-.1);}}
+      }
+    }
+  });
+
+  const badge=document.getElementById('breakevenBadge');
+  const canvas=document.getElementById('profitChart');
+  if(!badge)return;
+
+  if(breakevenVal!==null&&breakevenIdx!==null){
+    requestAnimationFrame(()=>{
+      if(!profitChart)return;
+      const meta=profitChart.getDatasetMeta(0);
+      const pt=meta.data[breakevenIdx];
+      if(!pt)return;
+      const canvasRect=canvas.getBoundingClientRect();
+      const parentRect=badge.parentElement.getBoundingClientRect();
+      const x=pt.x+(canvasRect.left-parentRect.left);
+      const y=pt.y+(canvasRect.top-parentRect.top);
+      const unit=xVar==='mf'?'MF':' mil';
+      badge.innerHTML=`⬥ Breakeven: <b>${xVar==='mf'?Math.round(breakevenVal):breakevenVal.toFixed(3)}${unit}</b>`;
+      badge.style.color='var(--text)';
+      badge.style.transform='none';
+      badge.style.display='block';
+      badge.style.visibility='visible';
+      badge.style.left=(x - badge.offsetWidth/2)+'px';
+      badge.style.top=(y - badge.offsetHeight - 8)+'px';
+    });
+  } else {
+    badge.style.display='none';
+  }
+
+  canvas.onmouseenter=()=>{ badge.style.visibility='hidden'; };
+  canvas.onmouseleave=()=>{ badge.style.visibility='visible'; };
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function switchTab(tab,el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tabs>.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  el.classList.add('active');
+}
+
+// ── Settings & Themes ─────────────────────────────────────────────────────────
+const THEMES=[
+  {id:'dark',         name:'Midnight', bg:'#0a0c10',bg2:'#111318',a1:'#ff6b35',a2:'#f7931e',light:false},
+  {id:'light',        name:'Daylight', bg:'#f0f2f8',bg2:'#ffffff',a1:'#cc4010',a2:'#bb6000',light:true},
+  {id:'candy',        name:'Candy',    bg:'#1a0a1e',bg2:'#221228',a1:'#ff6eb4',a2:'#d44eaa',light:false},
+  {id:'candy-light',  name:'Candy',    bg:'#fff0fa',bg2:'#fff8ff',a1:'#cc4488',a2:'#aa2266',light:true},
+  {id:'ocean',        name:'Ocean',    bg:'#040e18',bg2:'#071520',a1:'#00b8e0',a2:'#0088c8',light:false},
+  {id:'ocean-light',  name:'Ocean',    bg:'#e8f4ff',bg2:'#f0f8ff',a1:'#0070a0',a2:'#005580',light:true},
+  {id:'emerald',      name:'Emerald',  bg:'#040e08',bg2:'#071510',a1:'#20c060',a2:'#10a040',light:false},
+  {id:'emerald-light',name:'Emerald',  bg:'#eefff0',bg2:'#f8fff8',a1:'#108840',a2:'#0a6030',light:true},
+  {id:'void',         name:'Void',     bg:'#000000',bg2:'#080808',a1:'#cc00ff',a2:'#9900cc',light:false},
+  {id:'parchment',    name:'Parchment',bg:'#f5f0e8',bg2:'#faf7f0',a1:'#8b4513',a2:'#a0522d',light:true},
+  {id:'aurora',       name:'Aurora',   bg:'#060818',bg2:'#0d1228',a1:'#8844ff',a2:'#4488ff',light:false},
+  {id:'aurora-light', name:'Aurora',   bg:'#f0f0ff',bg2:'#f8f8ff',a1:'#5522dd',a2:'#2244cc',light:true},
+  {id:'inferno',      name:'Inferno',  bg:'#120400',bg2:'#1e0800',a1:'#ff4400',a2:'#ff8800',light:false},
+  {id:'inferno-light',name:'Inferno',  bg:'#fff4ee',bg2:'#fff8f4',a1:'#cc3300',a2:'#cc6600',light:true},
+  {id:'sakura',       name:'Sakura',   bg:'#120810',bg2:'#1e1018',a1:'#ff88b8',a2:'#ff6699',light:false},
+  {id:'sakura-light', name:'Sakura',   bg:'#fff5f8',bg2:'#fff8fb',a1:'#cc4477',a2:'#aa2255',light:true},
+  {id:'lavender',     name:'Lavender', bg:'#0e0c18',bg2:'#161420',a1:'#aa88ff',a2:'#8866ee',light:false},
+  {id:'lavender-light',name:'Lavender',bg:'#f4f2ff',bg2:'#faf8ff',a1:'#6644cc',a2:'#5533aa',light:true},
+  {id:'arctic',       name:'Arctic',   bg:'#060e18',bg2:'#0c1620',a1:'#40c8ff',a2:'#2080cc',light:false},
+  {id:'arctic-light', name:'Arctic',   bg:'#eef6ff',bg2:'#f5faff',a1:'#1070aa',a2:'#085588',light:true},
+  {id:'candycane',    name:'Candy Cane',bg:'#1a0808',bg2:'#240e0e',a1:'#ff3333',a2:'#ff8888',light:false,
+   presetBg:'https://images.unsplash.com/photo-1576158674803-e0d7e9f3ef82?w=1920&q=80',presetBlur:10,presetBright:22},
+  {id:'galaxy',       name:'Galaxy',   bg:'#050510',bg2:'#0a0a20',a1:'#a0a0ff',a2:'#7070ff',light:false,
+   presetBg:'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1920&q=80',presetBlur:3,presetBright:35},
+  {id:'forest',       name:'Forest',   bg:'#060e06',bg2:'#0a160a',a1:'#60d060',a2:'#30a030',light:false,
+   presetBg:'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1920&q=80',presetBlur:8,presetBright:28},
+  {id:'sunset-bg',    name:'Sunset',   bg:'#100808',bg2:'#180e0a',a1:'#ff8844',a2:'#ffcc44',light:false,
+   presetBg:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80',presetBlur:6,presetBright:30},
+];
+
+let currentTheme='dark';
+let themeMode='dark'; // 'dark' | 'light'
+let settingRaw=false;
+let settingCompact=false;
+let settingAutoCalc=true;
+let settingRefresh=60;
+let settingOrders=3;
+let settingDp=3;
+let refreshInterval=null;
+
+function buildThemeGrid(){
+  const filtered=THEMES.filter(t=>t.light===(themeMode==='light')&&!t.presetBg);
+  const preset=THEMES.filter(t=>t.presetBg);
+  const swatch=t=>`
+    <div class="tswatch${t.id===currentTheme?' active':''}" onclick="setTheme('${t.id}')" title="${t.name}">
+      <div class="tswatch-inner" style="background:${t.bg}">
+        <div class="tswatch-bar" style="background:${t.a1};width:80%"></div>
+        <div class="tswatch-bar" style="background:${t.a2};width:50%"></div>
+        <div style="display:flex;gap:3px;margin-top:2px">
+          <div style="width:10px;height:10px;border-radius:3px;background:${t.bg2.replace(/rgba[^)]+\)/,t.bg)}"></div>
+          <div style="width:10px;height:10px;border-radius:3px;background:${t.bg2.replace(/rgba[^)]+\)/,t.bg)}"></div>
+        </div>
+      </div>
+      <div class="tswatch-name" style="background:${t.bg};color:${t.a1}">${t.name}</div>
+    </div>`;
+  document.getElementById('themeGrid').innerHTML=filtered.map(swatch).join('');
+  // Preset bg themes row
+  const presetEl=document.getElementById('themeGridPreset');
+  if(presetEl) presetEl.innerHTML=preset.map(swatch).join('');
+}
+
+function setThemeMode(mode){
+  themeMode=mode;
+  document.getElementById('tmDark').classList.toggle('active',mode==='dark');
+  document.getElementById('tmLight').classList.toggle('active',mode==='light');
+  const curObj=THEMES.find(t=>t.id===currentTheme)||{};
+  const curName=curObj.name||'Midnight';
+  const isLight=mode==='light';
+  const match=THEMES.find(t=>t.name===curName&&t.light===isLight);
+  if(match) setTheme(match.id);
+  else buildThemeGrid();
+}
+
+function setTheme(id){
+  currentTheme=id;
+  const themeObj=THEMES.find(t=>t.id===id)||{};
+  // Light detection: explicitly marked light:true in THEMES array
+  const isLight=themeObj.light===true;
+  themeMode=isLight?'light':'dark';
+  document.documentElement.setAttribute('data-theme',id);
+  document.getElementById('tmDark').classList.toggle('active',!isLight);
+  document.getElementById('tmLight').classList.toggle('active',isLight);
+  // Handle preset backgrounds
+  if(themeObj.presetBg){
+    document.getElementById('setBgUrl').value=themeObj.presetBg;
+    document.getElementById('setBgBlur').value=themeObj.presetBlur||8;
+    document.getElementById('setBgBright').value=themeObj.presetBright||30;
+    applyCustomBg();
+  } else {
+    // Clear background when switching to non-preset theme
+    // (only if the bg was set by a previous preset, not by user)
+    if(!themeObj.presetBg){
+      document.getElementById('setBgUrl').value='';
+      document.body.classList.remove('custom-bg');
+    }
+  }
+  buildThemeGrid();
+  saveAll();
+  if(profitChart)renderGraph();
+}
+
+function applyCustomBg(){
+  const url=document.getElementById('setBgUrl').value.trim();
+  const blur=document.getElementById('setBgBlur').value;
+  const bright=document.getElementById('setBgBright').value;
+  if(url){
+    document.documentElement.style.setProperty('--custom-bg-img',`url('${url}')`);
+    document.documentElement.style.setProperty('--custom-bg-blur',blur+'px');
+    document.documentElement.style.setProperty('--custom-bg-bright',(bright/100).toString());
+    document.body.classList.add('custom-bg');
+  } else {
+    clearCustomBg();
+  }
+  saveAll();
+}
+
+function clearCustomBg(){
+  document.getElementById('setBgUrl').value='';
+  document.body.classList.remove('custom-bg');
+  saveAll();
+}
+
+function openSettings(){ document.getElementById('settingsOverlay').classList.add('open'); }
+function closeSettings(){ document.getElementById('settingsOverlay').classList.remove('open'); }
+document.getElementById('settingsBtn').addEventListener('click',openSettings);
+
+function applySettings(){
+  settingRaw=document.getElementById('setRaw').checked;
+  settingCompact=document.getElementById('setCompact').checked;
+  settingAutoCalc=document.getElementById('setAutoCalc').checked;
+  settingRefresh=parseInt(document.getElementById('setRefresh').value);
+  settingOrders=parseInt(document.getElementById('setOrders').value);
+  settingDp=parseInt(document.getElementById('setDp').value);
+  document.body.classList.toggle('compact',settingCompact);
+  if(refreshInterval)clearInterval(refreshInterval);
+  refreshInterval=setInterval(fetchPrices,settingRefresh*1000);
+  saveAll();
+}
+
+// Compact CSS
+const cs=document.createElement('style');
+cs.textContent=`.compact .card{padding:14px}.compact .profit-cell{padding:10px 14px}.compact .profit-value{font-size:16px}.compact .inputs-stack{gap:8px}`;
+document.head.appendChild(cs);
+
+function getInputs(){
+  return{
+    mf:document.getElementById('mf').value,
+    pl:document.getElementById('pl').value,
+    eyes:document.getElementById('eyes').value,
+    pos:document.getElementById('pos').value,
+    relDmg:document.getElementById('relDmg').value,
+    endermite:document.getElementById('endermite').value,
+    numDrags:document.getElementById('numDrags').value,
+    dragPiper:document.getElementById('dragPiper').checked,
+    legPetPrice:document.getElementById('legPetPrice').value,
+    epicPetPrice:document.getElementById('epicPetPrice').value,
+    supChest:document.getElementById('supChest').value,
+    supLegs:document.getElementById('supLegs').value,
+    supHelm:document.getElementById('supHelm').value,
+    supBoots:document.getElementById('supBoots').value,
+  };
+}
+
+function saveAll(){
+  try{
+    localStorage.setItem('dragonCalc',JSON.stringify({
+      theme:currentTheme,themeMode,raw:settingRaw,compact:settingCompact,
+      autoCalc:settingAutoCalc,refresh:settingRefresh,orders:settingOrders,dp:settingDp,
+      bgUrl:document.getElementById('setBgUrl').value,
+      bgBlur:document.getElementById('setBgBlur').value,
+      bgBright:document.getElementById('setBgBright').value,
+      inputs:getInputs()
+    }));
+  }catch(e){}
+}
+
+function loadAll(){
+  try{
+    const s=JSON.parse(localStorage.getItem('dragonCalc')||'{}');
+    if(s.theme){currentTheme=s.theme;document.documentElement.setAttribute('data-theme',s.theme);}
+    if(s.themeMode){themeMode=s.themeMode;document.getElementById('tmDark').classList.toggle('active',s.themeMode==='dark');document.getElementById('tmLight').classList.toggle('active',s.themeMode==='light');}
+    if(s.dp!==undefined){settingDp=s.dp;document.getElementById('setDp').value=s.dp;document.getElementById('dpVal').textContent=s.dp;}
+    if(s.bgUrl){document.getElementById('setBgUrl').value=s.bgUrl;document.getElementById('setBgBlur').value=s.bgBlur||8;document.getElementById('setBgBright').value=s.bgBright||35;applyCustomBg();}
+    if(s.raw!==undefined){settingRaw=s.raw;document.getElementById('setRaw').checked=s.raw;}
+    if(s.compact!==undefined){settingCompact=s.compact;document.getElementById('setCompact').checked=s.compact;document.body.classList.toggle('compact',s.compact);}
+    if(s.autoCalc!==undefined){settingAutoCalc=s.autoCalc;document.getElementById('setAutoCalc').checked=s.autoCalc;}
+    if(s.refresh){settingRefresh=s.refresh;document.getElementById('setRefresh').value=s.refresh;}
+    if(s.orders){settingOrders=s.orders;document.getElementById('setOrders').value=s.orders;}
+    if(s.inputs){
+      const i=s.inputs;
+      const set=(id,v)=>{const el=document.getElementById(id);if(el&&v!==undefined)el.value=v;};
+      set('mf',i.mf);set('pl',i.pl);set('eyes',i.eyes);set('pos',i.pos);
+      set('relDmg',i.relDmg);set('endermite',i.endermite);set('numDrags',i.numDrags);
+      if(i.dragPiper!==undefined)document.getElementById('dragPiper').checked=i.dragPiper;
+      set('legPetPrice',i.legPetPrice);set('epicPetPrice',i.epicPetPrice);
+      set('supChest',i.supChest);set('supLegs',i.supLegs);set('supHelm',i.supHelm);set('supBoots',i.supBoots);
+      // Sync to visible inputs
+      const sync2=(id,id2,v)=>{const el=document.getElementById(id2);if(el&&v)el.value=v;};
+      sync2('legPetPrice','legPetPrice2',i.legPetPrice);sync2('epicPetPrice','epicPetPrice2',i.epicPetPrice);
+      sync2('supChest','supChest2',i.supChest);sync2('supLegs','supLegs2',i.supLegs);
+      sync2('supHelm','supHelm2',i.supHelm);sync2('supBoots','supBoots2',i.supBoots);
+      if(i.mf)syncMF(i.mf);
+      if(i.eyes)syncEyes(i.eyes);
+    }
+  }catch(e){console.warn('Load failed:',e);}
+}
+
+function resetAll(){localStorage.removeItem('dragonCalc');location.reload();}
+
+// Override fmt for raw mode
+const _fmt=fmt;
+window.fmt=function(n,dp=3){
+  const d=settingDp!==undefined?settingDp:dp;
+  if(settingRaw&&n!==null&&n!==undefined&&!isNaN(n))return Math.round(n).toLocaleString('en-GB');
+  return _fmt(n,d);
+};
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+function syncMF(v){const el=document.getElementById('graphMF');if(el)el.value=v;}
+function syncEyes(v){const el=document.getElementById('graphEyes');if(el)el.value=v;}
+
+buildThemeGrid();
+loadAll();
+buildThemeGrid(); // rebuild after theme loaded
+
+fetchPrices();
+refreshInterval=setInterval(fetchPrices,settingRefresh*1000);
+
+// Auto-save on any input change
+document.querySelectorAll('input,select').forEach(el=>{
+  el.addEventListener('change',saveAll);
+  el.addEventListener('input',saveAll);
+});
+
+let autoUpdateTimer=null;
+function autoUpdate(){
+  if(!settingAutoCalc)return;
+  clearTimeout(autoUpdateTimer);
+  autoUpdateTimer=setTimeout(()=>{calculate();renderGraph();},150);
+}
+</script>
+</body>
+</html>
