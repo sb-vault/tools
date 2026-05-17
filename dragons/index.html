@@ -100,6 +100,9 @@ select option{background:var(--bg2)}
 .dot-legendary{background:var(--legendary);box-shadow:0 0 5px var(--legendary)}.dot-epic{background:var(--epic);box-shadow:0 0 5px var(--epic)}.dot-rare{background:var(--rare);box-shadow:0 0 4px var(--rare)}.dot-uncommon{background:var(--uncommon)}.dot-common{background:var(--common)}
 .glow-legendary{background:linear-gradient(90deg,rgba(255,170,0,.08),transparent);border-left:2px solid var(--legendary)}
 .glow-epic{background:linear-gradient(90deg,rgba(187,68,255,.07),transparent);border-left:2px solid var(--epic)}
+.glow-rare{background:linear-gradient(90deg,rgba(85,136,255,.07),transparent);border-left:2px solid var(--rare)}
+.glow-uncommon{background:linear-gradient(90deg,rgba(85,221,85,.06),transparent);border-left:2px solid var(--uncommon)}
+.glow-common{background:linear-gradient(90deg,rgba(153,153,153,.04),transparent);border-left:2px solid var(--common)}
 
 .results-stack{display:flex;flex-direction:column;gap:13px}
 .table-wrap{overflow-x:auto;border-radius:8px}
@@ -456,8 +459,8 @@ let priceMode='sellOffer';   // 'sellOffer' | 'instaSell'
 let sortCol=-1,sortDir=1;
 let lastNumDrags=500;
 
-const BAZAAR_IDS=['SUMMONING_EYE','ESSENCE_DRAGON','RITUAL_RESIDUE','DRAGON_HORN','DRAGON_CLAW','ENCHANTED_ENDER_PEARL','ENDER_PEARL','SUPERIOR_DRAGON_FRAGMENT','STRONG_FRAGMENT','WISE_FRAGMENT','YOUNG_FRAGMENT','OLD_FRAGMENT','PROTECTOR_FRAGMENT','UNSTABLE_FRAGMENT'];
-const ITEM_NAMES={SUMMONING_EYE:'Summoning Eye',ESSENCE_DRAGON:'Dragon Essence',RITUAL_RESIDUE:'Ritual Residue',DRAGON_HORN:'Dragon Horn',DRAGON_CLAW:'Dragon Claw',ENCHANTED_ENDER_PEARL:'Enchanted Ender Pearl',ENDER_PEARL:'Ender Pearl',SUPERIOR_DRAGON_FRAGMENT:'Superior Dragon Fragment',STRONG_FRAGMENT:'Strong Fragment',WISE_FRAGMENT:'Wise Fragment',YOUNG_FRAGMENT:'Young Fragment',OLD_FRAGMENT:'Old Fragment',PROTECTOR_FRAGMENT:'Protector Fragment',UNSTABLE_FRAGMENT:'Unstable Fragment'};
+const BAZAAR_IDS=['SUMMONING_EYE','ESSENCE_DRAGON','RITUAL_RESIDUE','DRAGON_HORN','DRAGON_CLAW','ENCHANTED_ENDER_PEARL','ENDER_PEARL','SUPERIOR_FRAGMENT','STRONG_FRAGMENT','WISE_FRAGMENT','YOUNG_FRAGMENT','OLD_FRAGMENT','PROTECTOR_FRAGMENT','UNSTABLE_FRAGMENT'];
+const ITEM_NAMES={SUMMONING_EYE:'Summoning Eye',ESSENCE_DRAGON:'Dragon Essence',RITUAL_RESIDUE:'Ritual Residue',DRAGON_HORN:'Dragon Horn',DRAGON_CLAW:'Dragon Claw',ENCHANTED_ENDER_PEARL:'Enchanted Ender Pearl',ENDER_PEARL:'Ender Pearl',SUPERIOR_FRAGMENT:'Superior Dragon Fragment',STRONG_FRAGMENT:'Strong Dragon Fragment',WISE_FRAGMENT:'Wise Dragon Fragment',YOUNG_FRAGMENT:'Young Dragon Fragment',OLD_FRAGMENT:'Old Dragon Fragment',PROTECTOR_FRAGMENT:'Protector Dragon Fragment',UNSTABLE_FRAGMENT:'Unstable Dragon Fragment'};
 
 // ── Fetch ─────────────────────────────────────────────────────────────────────
 async function fetchPrices(){
@@ -581,7 +584,6 @@ function calcDrops(eyes,mf,pl,pos,relDmg,piper){
 
 // ── Altar data ────────────────────────────────────────────────────────────────
 const AOTD_BONUS=[
-  {id:'SUPERIOR_DRAGON_FRAGMENT',name:'Superior Dragon Fragment',chance:0.80,avgAmt:12.5},
   {id:'RITUAL_RESIDUE',name:'Ritual Residue',chance:0.1059,avgAmt:1},
   {id:'DRAGON_CLAW',name:'Dragon Claw',chance:0.0235,avgAmt:1},
   {id:'SUMMONING_EYE',name:'Summoning Eye',chance:0.0471,avgAmt:1},
@@ -608,20 +610,25 @@ function getAvgNonSupFrag(){
 }
 
 function calcAltarValue(bonusArr,fragId,fragChance,fragAvg,essenceAmt,endermite,avgFragSO,avgFragIS){
-  const enderBonus=1+endermite*0.001;
+  // Endermite pet: base 45% chance multiplier, +0.1% per level (max level 100 = 55%)
+  const enderMult=0.45+endermite*0.001;
   let totalSO=0,totalIS=0;
   const rows=[];
   const essSO=p('ESSENCE_DRAGON').so*essenceAmt,essIS=p('ESSENCE_DRAGON').is*essenceAmt;
   totalSO+=essSO;totalIS+=essIS;
   rows.push({name:`${essenceAmt}× Dragon Essence`,so:essSO,is:essIS});
   if(fragChance>0){
-    const fSO=fragChance*fragAvg*(fragId==='AVG'?avgFragSO:p(fragId).so);
-    const fIS=fragChance*fragAvg*(fragId==='AVG'?avgFragIS:p(fragId).is);
+    const eff=Math.min(1,fragChance*enderMult);
+    const fSO=eff*fragAvg*(fragId==='AVG'?avgFragSO:p(fragId).so);
+    const fIS=eff*fragAvg*(fragId==='AVG'?avgFragIS:p(fragId).is);
     totalSO+=fSO;totalIS+=fIS;
-    rows.push({name:`Dragon Fragment (${(fragChance*100).toFixed(1)}%, avg ×${fragAvg})`,so:fSO,is:fIS});
+    const fragLabel=fragId==='AVG'
+      ?`Dragon Fragment (${(fragChance*100).toFixed(1)}%, avg ×${fragAvg})`
+      :`Superior Dragon Fragment (${(fragChance*100).toFixed(1)}%, avg ×${fragAvg})`;
+    rows.push({name:fragLabel,so:fSO,is:fIS});
   }
   for(const b of bonusArr){
-    const eff=Math.min(1,b.chance*enderBonus);
+    const eff=Math.min(1,b.chance*enderMult);
     const bSO=eff*b.avgAmt*p(b.id).so,bIS=eff*b.avgAmt*p(b.id).is;
     totalSO+=bSO;totalIS+=bIS;
     rows.push({name:`${b.name} (${(b.chance*100).toFixed(2)}%)`,so:bSO,is:bIS});
@@ -640,7 +647,7 @@ function setAltarPiece(piece,btn){
 function renderAltarCosts(piece){
   const endermite=parseFloat(document.getElementById('endermite')?.value||100);
   const avgFrag=getAvgNonSupFrag();
-  const aotd=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
+  const aotd=calcAltarValue(AOTD_BONUS,'SUPERIOR_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
   document.getElementById('altarAOTD').innerHTML=`
     <div class="altar-card" style="border-color:rgba(255,107,53,.3)">
       <div class="altar-card-name">Total Expected (Sell Offer)</div>
@@ -694,7 +701,7 @@ function calculate(){
   const wtFragSO=avgFrag.so;
   const wtFragIS=avgFrag.is;
 
-  const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
+  const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
   const armChest =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.chestplate,endermite,avgFrag.so,avgFrag.is);
   const armLegs  =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.leggings,endermite,avgFrag.so,avgFrag.is);
   const armHelm  =calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,ARMOUR_ESSENCE.helmet,endermite,avgFrag.so,avgFrag.is);
@@ -714,18 +721,18 @@ function calculate(){
   // leg edrag=legendary, epic edrag=epic, horn=epic, aotd=legendary, claw=rare
   // armour=legendary, fragment=epic, ench pearl=uncommon, pearl=common
   lastRows=[
-    {name:'Legendary Ender Dragon Pet',rarity:'legendary',drops:d.leg, so:d.leg*legPetM,   is:d.leg*legPetM},
-    {name:'Epic Ender Dragon Pet',      rarity:'epic',     drops:d.epic,so:d.epic*epicPetM,  is:d.epic*epicPetM},
-    {name:'Dragon Horn',                rarity:'epic',     drops:d.horn,so:d.horn*p('DRAGON_HORN').so,is:d.horn*p('DRAGON_HORN').is},
-    {name:'Aspect of the Dragons',      rarity:'legendary',drops:d.aotd,so:d.aotd*aotdAltar.totalSO,is:d.aotd*aotdAltar.totalIS},
-    {name:'Dragon Claw',                rarity:'rare',     drops:d.claw,so:d.claw*p('DRAGON_CLAW').so,is:d.claw*p('DRAGON_CLAW').is},
-    {name:'Dragon Chestplate',          rarity:'legendary',drops:d.chest,so:chestSO,is:chestIS},
-    {name:'Dragon Leggings',            rarity:'legendary',drops:d.legs, so:legsSO, is:legsIS},
-    {name:'Dragon Helmet',              rarity:'legendary',drops:d.helm, so:helmSO, is:helmIS},
-    {name:'Dragon Boots',               rarity:'legendary',drops:d.boots,so:bootsSO,is:bootsIS},
-    {name:'Dragon Fragment',            rarity:'epic',     drops:d.frags,so:d.frags*getAvgNonSupFrag().so,is:d.frags*getAvgNonSupFrag().is},
-    {name:'Enchanted Ender Pearl',      rarity:'uncommon', drops:d.enchPearls,so:d.enchPearls*p('ENCHANTED_ENDER_PEARL').so,is:d.enchPearls*p('ENCHANTED_ENDER_PEARL').is},
-    {name:'Ender Pearl',                rarity:'common',   drops:d.pearls,so:d.pearls*p('ENDER_PEARL').so,is:d.pearls*p('ENDER_PEARL').is},
+    {name:'Legendary Ender Dragon Pet',rarity:'legendary',icon:'img/img_drag_pet.png',     drops:d.leg, so:d.leg*legPetM,   is:d.leg*legPetM},
+    {name:'Epic Ender Dragon Pet',      rarity:'epic',    icon:'img/img_drag_pet.png',     drops:d.epic,so:d.epic*epicPetM,  is:d.epic*epicPetM},
+    {name:'Dragon Horn',                rarity:'epic',    icon:'img/img_dragon_horn.png',  drops:d.horn,so:d.horn*p('DRAGON_HORN').so,is:d.horn*p('DRAGON_HORN').is},
+    {name:'Aspect of the Dragons',      rarity:'legendary',icon:'img/img_aotd.png',        drops:d.aotd,so:d.aotd*aotdAltar.totalSO,is:d.aotd*aotdAltar.totalIS},
+    {name:'Dragon Claw',                rarity:'rare',    icon:'img/img_dragon_claw.png',  drops:d.claw,so:d.claw*p('DRAGON_CLAW').so,is:d.claw*p('DRAGON_CLAW').is},
+    {name:'Dragon Chestplate',          rarity:'legendary',icon:'img/img_chestplate.png',  drops:d.chest,so:chestSO,is:chestIS},
+    {name:'Dragon Leggings',            rarity:'legendary',icon:'img/img_leggings.png',    drops:d.legs, so:legsSO, is:legsIS},
+    {name:'Dragon Helmet',              rarity:'legendary',icon:'img/img_helmet.png',      drops:d.helm, so:helmSO, is:helmIS},
+    {name:'Dragon Boots',               rarity:'legendary',icon:'img/img_boots.png',       drops:d.boots,so:bootsSO,is:bootsIS},
+    {name:'Superior Dragon Fragment',   rarity:'epic',    icon:'img/img_superior_fragment.png',drops:d.frags,so:d.frags*getAvgNonSupFrag().so,is:d.frags*getAvgNonSupFrag().is},
+    {name:'Enchanted Ender Pearl',      rarity:'uncommon',icon:'img/img_ench_pearl.png',   drops:d.enchPearls,so:d.enchPearls*p('ENCHANTED_ENDER_PEARL').so,is:d.enchPearls*p('ENCHANTED_ENDER_PEARL').is},
+    {name:'Ender Pearl',                rarity:'common',  icon:'img/img_ender_pearl.png',  drops:d.pearls,so:d.pearls*p('ENDER_PEARL').so,is:d.pearls*p('ENDER_PEARL').is},
   ];
 
   let totalSO=0,totalIS=0;
@@ -812,13 +819,20 @@ function renderTable(){
 
   document.getElementById('th4').textContent=isSO?'Coins (Sell Offer)':'Coins (Insta Sell)';
 
-  const glowClass=r=>r.rarity==='legendary'?'glow-legendary':r.rarity==='epic'?'glow-epic':'';
+  const glowClass=r=>{
+    if(r.rarity==='legendary')return'glow-legendary';
+    if(r.rarity==='epic')return'glow-epic';
+    if(r.rarity==='rare')return'glow-rare';
+    if(r.rarity==='uncommon')return'glow-uncommon';
+    if(r.rarity==='common')return'glow-common';
+    return'';
+  };
 
   document.getElementById('dropsTable').innerHTML=rows.map(r=>{
     const coins=isSO?r.so:r.is;
     const coinsDisp=isOverall?coins*numDrags:coins;
     return`<tr class="${glowClass(r)}">
-      <td><span class="rarity-dot dot-${r.rarity}"></span>${r.name}</td>
+      <td style="display:flex;align-items:center;gap:7px"><img src="${r.icon||''}" width="20" height="20" style="image-rendering:pixelated;border-radius:3px;flex-shrink:0" onerror="this.style.display='none'"><span class="rarity-dot dot-${r.rarity}"></span>${r.name}</td>
       <td class="rarity-${r.rarity}" style="text-transform:capitalize">${r.rarity}</td>
       <td>${fmtN(r.drops)}</td>
       <td>${fmtN(r.drops*numDrags,2)}</td>
@@ -845,11 +859,29 @@ function sortTable(col){
 let pricesSortCol=-1,pricesSortDir=-1;
 let pricesData=[];
 
+const ITEM_META={
+  SUMMONING_EYE:          {name:'Summoning Eye',             rarity:'uncommon', icon:'img/img_summoning_eye.png'},
+  ESSENCE_DRAGON:         {name:'Dragon Essence',            rarity:'common',   icon:'img/img_essence.png'},
+  RITUAL_RESIDUE:         {name:'Ritual Residue',            rarity:'epic',     icon:'img/img_ritual_residue.png'},
+  DRAGON_HORN:            {name:'Dragon Horn',               rarity:'epic',     icon:'img/img_dragon_horn.png'},
+  DRAGON_CLAW:            {name:'Dragon Claw',               rarity:'rare',     icon:'img/img_dragon_claw.png'},
+  ENCHANTED_ENDER_PEARL:  {name:'Enchanted Ender Pearl',     rarity:'uncommon', icon:'img/img_ench_pearl.png'},
+  ENDER_PEARL:            {name:'Ender Pearl',               rarity:'common',   icon:'img/img_ender_pearl.png'},
+  SUPERIOR_FRAGMENT:{name:'Superior Dragon Fragment', rarity:'epic',     icon:'img/img_superior_fragment.png'},
+  STRONG_FRAGMENT:        {name:'Strong Dragon Fragment',    rarity:'epic',     icon:'img/img_strong_frag.png'},
+  WISE_FRAGMENT:          {name:'Wise Dragon Fragment',      rarity:'epic',     icon:'img/img_wise_frag.png'},
+  YOUNG_FRAGMENT:         {name:'Young Dragon Fragment',     rarity:'epic',     icon:'img/img_young_frag.png'},
+  OLD_FRAGMENT:           {name:'Old Dragon Fragment',       rarity:'epic',     icon:'img/img_old_frag.png'},
+  PROTECTOR_FRAGMENT:     {name:'Protector Dragon Fragment', rarity:'epic',     icon:'img/img_protector_frag.png'},
+  UNSTABLE_FRAGMENT:      {name:'Unstable Dragon Fragment',  rarity:'epic',     icon:'img/img_unstable_frag.png'},
+};
+
 function renderPricesTable(){
   pricesData=BAZAAR_IDS.map(id=>{
     const pr=prices[id]||{so:0,is:0};
+    const meta=ITEM_META[id]||{name:id,rarity:'common',icon:''};
     const spread=pr.is&&pr.so?((pr.is-pr.so)/pr.is*100):null;
-    return{id,name:ITEM_NAMES[id]||id,so:pr.so,is:pr.is,spread};
+    return{id,name:meta.name,rarity:meta.rarity,icon:meta.icon,so:pr.so,is:pr.is,spread};
   });
   renderPricesSorted();
   document.getElementById('lastUpdated').textContent='Last updated: '+new Date().toLocaleTimeString();
@@ -867,9 +899,20 @@ function renderPricesSorted(){
       return pricesSortDir*(va-vb);
     });
   }
+  const rarityBg={
+    legendary:'linear-gradient(90deg,rgba(255,170,0,.08),transparent)',
+    epic:'linear-gradient(90deg,rgba(187,68,255,.07),transparent)',
+    rare:'linear-gradient(90deg,rgba(85,136,255,.07),transparent)',
+    uncommon:'linear-gradient(90deg,rgba(85,221,85,.06),transparent)',
+    common:'linear-gradient(90deg,rgba(153,153,153,.04),transparent)',
+  };
+  const rarityBorder={legendary:'var(--legendary)',epic:'var(--epic)',rare:'var(--rare)',uncommon:'var(--uncommon)',common:'transparent'};
   document.getElementById('pricesTable').innerHTML=rows.map(r=>`
-    <tr>
-      <td>${r.name}</td>
+    <tr style="background:${rarityBg[r.rarity]||'none'};border-left:2px solid ${rarityBorder[r.rarity]||'transparent'}">
+      <td style="display:flex;align-items:center;gap:8px">
+        <img src="${r.icon}" width="20" height="20" style="image-rendering:pixelated;border-radius:3px;flex-shrink:0" onerror="this.style.display='none'">
+        <span class="rarity-dot dot-${r.rarity}"></span>${r.name}
+      </td>
       <td>${fmt(r.so)}</td>
       <td>${fmt(r.is)}</td>
       <td>${r.spread!==null?r.spread.toFixed(2)+'%':'—'}</td>
@@ -900,8 +943,8 @@ function calcProfitGraph(mf,eyePriceMil,eyes,pl,pos,relDmg,endermite,piper){
   const d=calcDrops(eyes,mf,pl,pos,relDmg,piper);
   const supProb=1/25;
   const avgFrag=getAvgNonSupFrag();
-  const wtFragSO=supProb*p('SUPERIOR_DRAGON_FRAGMENT').so+(1-supProb)*avgFrag.so;
-  const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_DRAGON_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
+  const wtFragSO=supProb*p('SUPERIOR_FRAGMENT').so+(1-supProb)*avgFrag.so;
+  const aotdAltar=calcAltarValue(AOTD_BONUS,'SUPERIOR_FRAGMENT',0.80,12.5,AOTD_ESSENCE,endermite,avgFrag.so,avgFrag.is);
   const armAltar=calcAltarValue(ARMOUR_BONUS,'AVG',ARMOUR_FRAG_CHANCE,ARMOUR_FRAG_AVG,35,endermite,avgFrag.so,avgFrag.is);
   const supChest=(parseFloat(document.getElementById('supChest').value)||11)*1e6;
   const supLegs =(parseFloat(document.getElementById('supLegs').value)||10)*1e6;
