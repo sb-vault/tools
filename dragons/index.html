@@ -160,7 +160,7 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
     <div class="header-inner">
       <div class="logo">
         <h1>⚔ Dragon Calculator</h1>
-        <p>Hypixel SkyBlock · Live Profit Analyser · <a href="https://mrlancus.github.io/skyblock/" style="color:var(--sunset1);text-decoration:none;font-weight:600;letter-spacing:.08em" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">mrlancus tools ↗</a></p>
+        <p>SkyBlock Vault · <a href="https://sb-vault.github.io/tools/" style="color:var(--sunset1);text-decoration:none;font-weight:600;letter-spacing:.08em" onmouseover="this.style.opacity='.7'" onmouseout="this.style.opacity='1'">skyblock vault ↗</a></p>
       </div>
       <div class="header-right">
         <div class="price-status">
@@ -174,7 +174,10 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
             <p style="margin-bottom:10px">Hi! This is a free, open-source calculator for dragons – the best part of Hypixel SkyBlock.</p>
             <p style="margin-bottom:10px">Please <a href="https://github.com/mrlancus/skyblock/discussions" target="_blank" style="color:var(--sunset1);text-decoration:none;font-weight:500">report any bugs or suggestions</a> – every idea is welcome!</p>
             <p style="margin-bottom:16px">Feel free to ping me on Discord or add me on Hypixel if you need anything!<br><span style="color:var(--sunset1);font-weight:600">Username: mrlancus</span></p>
-            <div style="border-top:1px solid var(--border);padding-top:12px;font-size:11px;color:var(--text3)">Not affiliated with Hypixel · Prices via Hypixel Bazaar API</div>
+            <div style="border-top:1px solid var(--border);padding-top:12px;font-size:11px;color:var(--text3);display:flex;justify-content:space-between;align-items:center">
+              <span>v1.0.0</span>
+              <a id="calcCommit" href="https://github.com/sb-vault/tools/commit/main" target="_blank" style="color:var(--text3);text-decoration:none;font-family:monospace">loading...</a>
+            </div>
           </div>
         </div>
         <button class="theme-btn" id="settingsBtn" title="Settings" style="font-size:18px">⚙</button>
@@ -1273,6 +1276,14 @@ document.addEventListener('click',e=>{
     document.getElementById('feedbackDropdown').style.display='none';
   }
 });
+
+// Fetch latest commit
+fetch('https://api.github.com/repos/sb-vault/tools/commits/main')
+  .then(r=>r.json())
+  .then(d=>{
+    const el=document.getElementById('calcCommit');
+    if(el&&d.sha){el.textContent=d.sha.slice(0,7);el.href='https://github.com/sb-vault/tools/commit/'+d.sha;}
+  }).catch(()=>{});
 function openSettings(){ document.getElementById('settingsOverlay').classList.add('open'); }
 function closeSettings(){ document.getElementById('settingsOverlay').classList.remove('open'); }
 document.getElementById('settingsBtn').addEventListener('click',openSettings);

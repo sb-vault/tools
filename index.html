@@ -26,14 +26,14 @@
 :root[data-theme="lavender-light"]{--bg:#f4f2ff;--bg2:#faf8ff;--bg3:#ece8ff;--border:#c8c0f0;--text:#180e30;--text2:#5048a0;--text3:#9088c8;--sunset1:#6644cc;--sunset2:#5533aa;--sunset3:#9966ee;--card-shadow:0 4px 24px rgba(60,20,180,.1)}
 :root[data-theme="arctic"]{--bg:#060e18;--bg2:#0c1620;--bg3:#121e2c;--border:#203848;--text:#e8f4ff;--text2:#88b8d8;--text3:#406888;--sunset1:#40c8ff;--sunset2:#2080cc;--sunset3:#80e8ff;--card-shadow:0 4px 32px rgba(0,30,60,.6)}
 :root[data-theme="arctic-light"]{--bg:#eef6ff;--bg2:#f5faff;--bg3:#e4f0ff;--border:#a0c8e8;--text:#081828;--text2:#305878;--text3:#6088a8;--sunset1:#1070aa;--sunset2:#085588;--sunset3:#1090cc;--card-shadow:0 4px 24px rgba(0,60,120,.1)}
- 
+
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(255,107,53,.06) 0,transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(247,147,30,.04) 0,transparent 55%);pointer-events:none;z-index:0}
 .custom-bg-layer{display:none;position:fixed;inset:-40px;background-size:cover;background-position:center;z-index:0;transition:filter .3s}
 body.custom-bg .custom-bg-layer{display:block}
 .container{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
- 
+
 /* Header */
 header{padding:28px 0 22px;border-bottom:1px solid var(--border);margin-bottom:48px}
 .header-inner{display:flex;align-items:center;justify-content:space-between}
@@ -42,26 +42,25 @@ header{padding:28px 0 22px;border-bottom:1px solid var(--border);margin-bottom:4
 .header-right{display:flex;align-items:center;gap:10px}
 .icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s}
 .icon-btn:hover{border-color:var(--sunset1);color:var(--sunset1)}
- 
+
 /* Hero */
 .hero{text-align:center;padding:10px 0 40px}
 .hero-title{font-family:'Cinzel',serif;font-size:clamp(28px,5vw,56px);font-weight:700;background:linear-gradient(135deg,var(--sunset1),var(--sunset2),var(--sunset3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:14px;letter-spacing:-.01em}
 .hero-sub{font-size:14px;color:var(--text2);max-width:480px;margin:0 auto 32px;line-height:1.7}
 .hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;font-size:11px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px}
-.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
- 
+
 /* Tools grid */
 .section-title{font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:20px;display:flex;align-items:center;gap:10px}
 .section-title::after{content:'';flex:1;height:1px;background:var(--border)}
 .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:48px}
- 
+
 .tool-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px 20px;text-decoration:none;color:var(--text);transition:all .25s;position:relative;overflow:hidden;display:block}
 .tool-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--sunset1),var(--sunset2));opacity:0;transition:opacity .25s;z-index:0}
 .tool-card:hover{border-color:var(--sunset1);box-shadow:0 8px 32px rgba(0,0,0,.3),0 0 0 1px var(--sunset1);transform:translateY(-2px)}
 .tool-card:hover::before{opacity:.04}
 .tool-card>*{position:relative;z-index:1}
- 
+
 .tool-card-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
 .tool-icon{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--sunset1),var(--sunset2));display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
 .tool-badge{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:rgba(78,203,113,.15);color:var(--green);border:1px solid rgba(78,203,113,.2)}
@@ -72,12 +71,12 @@ header{padding:28px 0 22px;border-bottom:1px solid var(--border);margin-bottom:4
 .tag{font-size:11px;padding:3px 9px;border-radius:6px;background:var(--bg3);border:1px solid var(--border);color:var(--text3)}
 .tool-arrow{position:absolute;bottom:22px;right:22px;font-size:18px;color:var(--sunset1);opacity:0;transform:translateX(-4px);transition:all .2s}
 .tool-card:hover .tool-arrow{opacity:1;transform:translateX(0)}
- 
+
 /* Coming soon card */
 .tool-card.soon{cursor:default;opacity:.65}
 .tool-card.soon:hover{transform:none;box-shadow:none;border-color:var(--border)}
 .tool-card.soon::before{display:none}
- 
+
 /* About section */
 .about-card{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:28px;margin-bottom:48px;display:grid;grid-template-columns:1fr 1fr;gap:32px}
 .about-text{font-size:14px;color:var(--text2);line-height:1.8}
@@ -87,7 +86,7 @@ header{padding:28px 0 22px;border-bottom:1px solid var(--border);margin-bottom:4
 .about-link{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);text-decoration:none;font-size:13px;font-weight:500;transition:all .2s}
 .about-link:hover{border-color:var(--sunset1);color:var(--sunset1)}
 .about-link-icon{font-size:18px;width:24px;text-align:center}
- 
+
 /* Settings */
 .settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:none;justify-content:flex-end;align-items:flex-start;padding:70px 20px 0}
 .settings-overlay.open{display:flex;animation:fadeIn .2s ease}
@@ -113,7 +112,7 @@ header{padding:28px 0 22px;border-bottom:1px solid var(--border);margin-bottom:4
 .toggle-slider::before{content:'';position:absolute;width:15px;height:15px;left:2px;top:2px;background:var(--text3);border-radius:50%;transition:.2s}
 .toggle input:checked+.toggle-slider{background:var(--sunset1);border-color:var(--sunset1)}
 .toggle input:checked+.toggle-slider::before{transform:translateX(17px);background:#fff}
- 
+
 footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter-spacing:.04em;border-top:1px solid var(--border);margin-top:12px}
 @media(max-width:640px){.about-card{grid-template-columns:1fr}.hero-title{font-size:36px}}
 </style>
@@ -121,19 +120,34 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
 <body>
 <div class="custom-bg-layer" id="customBgLayer"></div>
 <div class="container">
- 
+
   <header>
     <div class="header-inner">
       <div class="logo">
-        <h1>MRLANCUS TOOLS</h1>
+        <h1>SkyBlock Vault</h1>
         <p>Hypixel SkyBlock · Free & Open Source</p>
       </div>
       <div class="header-right">
+        <div style="position:relative">
+          <button class="icon-btn" id="aboutBtn" onclick="toggleAbout()" style="font-size:12px;width:auto;padding:0 12px;font-weight:600">About</button>
+          <div id="aboutDropdown" style="display:none;position:absolute;right:0;top:44px;background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;width:290px;box-shadow:0 12px 40px rgba(0,0,0,.4);z-index:300;font-size:13px;line-height:1.8;color:var(--text2)">
+            <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">SkyBlock Vault</div>
+            <p style="margin-bottom:10px">Hi! These are free, open-source tools built for Hypixel SkyBlock – made by a player, for players.</p>
+            <p style="margin-bottom:10px">Please report any bugs or suggestions – every idea is welcome! Feel free to ping me on Discord or add me on Hypixel.</p>
+            <p style="margin-bottom:14px;color:var(--sunset1);font-weight:600">Username: mrlancus</p>
+            <a href="https://github.com/sb-vault/tools/discussions" target="_blank" style="display:block;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;font-size:12px;font-weight:500;margin-bottom:6px;transition:border-color .2s" onmouseover="this.style.borderColor='var(--sunset1)'" onmouseout="this.style.borderColor='var(--border)'">GitHub Discussions</a>
+            <a href="https://sky.shiiyu.moe/stats/MrLancus/Tomato" target="_blank" style="display:block;padding:8px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;color:var(--text);text-decoration:none;font-size:12px;font-weight:500;transition:border-color .2s" onmouseover="this.style.borderColor='var(--sunset1)'" onmouseout="this.style.borderColor='var(--border)'">My SkyCrypt Profile</a>
+            <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;justify-content:space-between;align-items:center">
+              <span>v1.0.0</span>
+              <a id="hubCommit" href="https://github.com/sb-vault/tools/commit/main" target="_blank" style="color:var(--text3);text-decoration:none;font-family:monospace">loading...</a>
+            </div>
+          </div>
+        </div>
         <button class="icon-btn" id="settingsBtn" title="Settings" style="font-size:18px">⚙</button>
       </div>
     </div>
   </header>
- 
+
   <!-- Settings Panel -->
   <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
     <div class="settings-panel">
@@ -163,18 +177,18 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
       <button onclick="resetAll()" style="padding:9px;background:rgba(232,85,85,.1);border:1px solid rgba(232,85,85,.3);border-radius:8px;color:#e85555;font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;width:100%">Reset Settings</button>
     </div>
   </div>
- 
+
   <!-- Hero -->
   <div class="hero">
-    <div class="hero-badge"><span style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;flex-shrink:0;display:inline-block"></span>All tools free · Open source</div>
+    <div class="hero-badge"><span style="width:7px;height:7px;border-radius:50%;background:#4ecb71;box-shadow:0 0 6px #4ecb71;animation:pulse 2s infinite;flex-shrink:0;display:inline-block;margin-right:4px"></span>All tools free · Open source</div>
     <h2 class="hero-title">SkyBlock Tools</h2>
     <p class="hero-sub">A collection of calculators and tools built for Hypixel SkyBlock. Made by a player, for players.</p>
   </div>
- 
+
   <!-- Tools -->
   <div class="section-title">Tools</div>
   <div class="tools-grid">
- 
+
     <a href="./dragons/" class="tool-card">
       <div class="tool-card-header">
         <div class="tool-icon">⚔</div>
@@ -184,16 +198,16 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
       <div class="tool-desc">Calculate your expected profit per dragon run. Live Bazaar prices, drop chances, Draconic Altar values, and a profit sensitivity graph.</div>
       <span class="tool-arrow">→</span>
     </a>
- 
-    <div class="tool-card soon">
+
+    <a href="https://mrlancus.github.io/vault" class="tool-card" style="text-decoration:none">
       <div class="tool-card-header">
-        <div class="tool-icon" style="background:linear-gradient(135deg,var(--text3),var(--text2));font-size:18px;letter-spacing:-2px">🚧</div>
-        <span class="tool-badge wip">Coming Soon</span>
+        <div class="tool-icon" style="background:linear-gradient(135deg,var(--text3),var(--text2));font-size:18px">🚧</div>
+        <span class="tool-badge" style="background:rgba(232,85,85,.15);color:var(--red);border-color:rgba(232,85,85,.3)">Work in Progress</span>
       </div>
-      <div class="tool-name">Exotic Trading Hub</div>
+      <div class="tool-name">The Vault</div>
       <div class="tool-desc">A marketplace for Exotic, Crystal dyed, and Seymour Armour – list what you've got, browse offers, and trade with other players.</div>
-    </div>
- 
+    </a>
+
     <div class="tool-card soon">
       <div class="tool-card-header">
         <div class="tool-icon" style="background:linear-gradient(135deg,var(--text3),var(--text2));font-size:18px">🚧</div>
@@ -202,9 +216,9 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
       <div class="tool-name">More Tools</div>
       <div class="tool-desc">Got an idea? Drop it on GitHub Discussions and it might become the next tool in the collection.</div>
     </div>
- 
+
   </div>
- 
+
   <!-- About -->
   <div class="section-title">About</div>
   <div class="about-card">
@@ -225,10 +239,10 @@ footer{text-align:center;padding:26px 0;color:var(--text3);font-size:11px;letter
       </a>
     </div>
   </div>
- 
+
 </div>
 <footer>mrlancus tools · Not affiliated with Hypixel · Open source</footer>
- 
+
 <script>
 const THEMES=[
   {id:'dark',         name:'Midnight', bg:'#0a0c10',bg2:'#111318',a1:'#ff6b35',a2:'#f7931e',light:false},
@@ -256,9 +270,9 @@ const THEMES=[
   {id:'forest',       name:'Forest',   bg:'#060e06',bg2:'#0a160a',a1:'#60d060',a2:'#30a030',light:false,presetBg:'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1920&q=80',presetBlur:8,presetBright:28},
   {id:'sunset-bg',    name:'Sunset',   bg:'#100808',bg2:'#180e0a',a1:'#ff8844',a2:'#ffcc44',light:false,presetBg:'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80',presetBlur:6,presetBright:30},
 ];
- 
+
 let currentTheme='dark',themeMode='dark';
- 
+
 function buildThemeGrid(){
   const filtered=THEMES.filter(t=>t.light===(themeMode==='light')&&!t.presetBg);
   const preset=THEMES.filter(t=>t.presetBg);
@@ -266,7 +280,7 @@ function buildThemeGrid(){
   document.getElementById('themeGrid').innerHTML=filtered.map(swatch).join('');
   const pe=document.getElementById('themeGridPreset');if(pe)pe.innerHTML=preset.map(swatch).join('');
 }
- 
+
 function setThemeMode(mode){
   themeMode=mode;
   document.getElementById('tmDark').classList.toggle('active',mode==='dark');
@@ -275,7 +289,7 @@ function setThemeMode(mode){
   const match=THEMES.find(t=>t.name===cur.name&&t.light===(mode==='light'));
   if(match)setTheme(match.id);else buildThemeGrid();
 }
- 
+
 function setTheme(id){
   currentTheme=id;
   const t=THEMES.find(x=>x.id===id)||{};
@@ -296,7 +310,7 @@ function setTheme(id){
   buildThemeGrid();
   save();
 }
- 
+
 function applyCustomBg(){
   const url=document.getElementById('setBgUrl').value.trim();
   const layer=document.getElementById('customBgLayer');
@@ -307,18 +321,18 @@ function applyCustomBg(){
   } else clearCustomBg();
   save();
 }
- 
+
 function clearCustomBg(){
   document.getElementById('setBgUrl').value='';
   document.getElementById('customBgLayer').style.backgroundImage='';
   document.body.classList.remove('custom-bg');
   save();
 }
- 
+
 function save(){
   try{localStorage.setItem('mrlancusHub',JSON.stringify({theme:currentTheme,themeMode,bgUrl:document.getElementById('setBgUrl').value,bgBlur:document.getElementById('setBgBlur').value,bgBright:document.getElementById('setBgBright').value}));}catch(e){}
 }
- 
+
 function load(){
   try{
     const s=JSON.parse(localStorage.getItem('mrlancusHub')||'{}');
@@ -327,12 +341,30 @@ function load(){
     if(s.bgUrl){document.getElementById('setBgUrl').value=s.bgUrl;document.getElementById('setBgBlur').value=s.bgBlur||8;document.getElementById('setBgBright').value=s.bgBright||35;applyCustomBg();}
   }catch(e){}
 }
- 
+
 function resetAll(){localStorage.removeItem('mrlancusHub');location.reload();}
 function openSettings(){document.getElementById('settingsOverlay').classList.add('open');}
 function closeSettings(){document.getElementById('settingsOverlay').classList.remove('open');}
 document.getElementById('settingsBtn').addEventListener('click',openSettings);
- 
+
+function toggleAbout(){
+  const d=document.getElementById('aboutDropdown');
+  d.style.display=d.style.display==='none'?'block':'none';
+}
+document.addEventListener('click',e=>{
+  const ab=document.getElementById('aboutBtn');
+  const ad=document.getElementById('aboutDropdown');
+  if(ab&&ad&&!ab.contains(e.target)&&!ad.contains(e.target))ad.style.display='none';
+});
+
+// Fetch latest commit hash from GitHub API
+fetch('https://api.github.com/repos/sb-vault/tools/commits/main')
+  .then(r=>r.json())
+  .then(d=>{
+    const el=document.getElementById('hubCommit');
+    if(el&&d.sha){el.textContent=d.sha.slice(0,7);el.href='https://github.com/sb-vault/tools/commit/'+d.sha;}
+  }).catch(()=>{});
+
 buildThemeGrid();
 load();
 buildThemeGrid();
